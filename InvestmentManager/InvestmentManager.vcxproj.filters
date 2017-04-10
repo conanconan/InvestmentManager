@@ -11,11 +11,18 @@
     <ClCompile Include="InvestmentManager.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="InvestMgr.cpp" />
+    <ClCompile Include="InvestAgent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InvestmentManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="InvestMgr.h" />
+    <ClInclude Include="InvestAgent.h" />
+    <ClInclude Include="IInvestMgr.h" />
+    <ClInclude Include="IDataProvider.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

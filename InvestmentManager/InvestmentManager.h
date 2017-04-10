@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "InvestMgr.h"
+#include "IInvestMgr.h"
 
 #ifdef _INVESTMGRDLL
 #define INVESTMGR_DLLAPI extern "C" __declspec(dllexport)
@@ -7,5 +7,5 @@
 #define INVESTMGR_API extern "C" __declspec(dllimport)
 #endif
 
-INVESTMGR_DLLAPI bool CreateInvestMgr(CInvestMgr** ppInvestMgr);
-INVESTMGR_DLLAPI bool ReleaseInvestMgr(CInvestMgr* pInvestMgr);
+INVESTMGR_DLLAPI bool CreateInvestMgr(IInvestMgr** ppInvestMgr);
+INVESTMGR_DLLAPI bool ReleaseInvestMgr(IInvestMgr* pInvestMgr);
