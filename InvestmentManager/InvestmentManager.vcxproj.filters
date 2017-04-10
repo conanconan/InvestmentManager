@@ -6,4 +6,16 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="InvestmentManager.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="InvestMgr.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="InvestmentManager.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="InvestMgr.h" />
+  </ItemGroup>
 </Project>
