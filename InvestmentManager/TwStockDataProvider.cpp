@@ -9,7 +9,8 @@ using namespace web::http;
 using namespace web::http::client;
 using namespace std::chrono;
 
-CTwStockDataProvider::CTwStockDataProvider()
+CTwStockDataProvider::CTwStockDataProvider(std::string category)
+	: m_category(category)
 {
 }
 
@@ -17,7 +18,7 @@ CTwStockDataProvider::~CTwStockDataProvider()
 {
 }
 
-bool CTwStockDataProvider::GetData(IDataProvider::DataType dataType, std::vector<std::string> dataId, 
+bool CTwStockDataProvider::GetData(std::vector<std::string> dataId, 
 	boost::gregorian::date date, void* pAdvData)
 {
 	http_client httpClient(U("http://mis.twse.com.tw"));
@@ -31,8 +32,8 @@ bool CTwStockDataProvider::GetData(IDataProvider::DataType dataType, std::vector
 			ex_chValue << "|";
 		}
 
-		ex_chValue << ((dataType == DataType_OverTheCounterMarket) ? "otc_" : "tse_") << id.c_str() 
-				   << ".tw_" << formatedDate.c_str();//tse: ¤W¥«, otc: ¤WÂd
+		ex_chValue << m_category.c_str() << "_" << id.c_str()
+				   << ".tw_" << formatedDate.c_str();
 	}
 
 	uri_builder uriBuilder(U("/stock/api/getStockInfo.jsp?"));

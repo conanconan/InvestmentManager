@@ -11,17 +11,12 @@ CInvestAgent::~CInvestAgent()
 {
 }
 
-bool CInvestAgent::GetDataIdList(std::vector<std::string>& idList) const
+bool CInvestAgent::GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<double>& data)
 {
-	return m_dataProvider->GetDataIdList(idList);
+	return false;
 }
 
-double CInvestAgent::GetData(std::string dataId, boost::gregorian::date date)
+bool CInvestAgent::GetData(std::vector<std::string> dataId, boost::gregorian::date date, void* pAdvData)
 {
-	return m_dataProvider->GetData(dataId, date);
-}
-
-bool CInvestAgent::GetAdvData(std::string dataId, boost::gregorian::date date, void* pAdvData)
-{
-	return m_dataProvider->GetAdvData(dataId, date, pAdvData);
+	return m_dataProvider->GetData(dataId, date, pAdvData);
 }

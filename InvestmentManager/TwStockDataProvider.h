@@ -1,13 +1,17 @@
 #pragma once
 #include "IDataProvider.h"
+#include <string>
 
 class CTwStockDataProvider : public IDataProvider
 {
 public:
-	CTwStockDataProvider();
+	CTwStockDataProvider(std::string category);
 	virtual ~CTwStockDataProvider();
 
-	virtual bool GetData(IDataProvider::DataType dataType, std::vector<std::string> dataId, 
+	virtual bool GetData(std::vector<std::string> dataId, 
 		boost::gregorian::date date, void* pAdvData);
+
+private:
+	std::string m_category;//tse: ¤W¥«, otc: ¤WÂd
 };
 

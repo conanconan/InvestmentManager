@@ -10,9 +10,8 @@ public:
 	CInvestAgent(std::string agentId, std::shared_ptr<IDataProvider> dataProvider);
 	virtual ~CInvestAgent();
 
-	bool GetDataIdList(std::vector<std::string>& idList) const;
-	double GetData(std::string dataId, boost::gregorian::date date);
-	bool GetAdvData(std::string dataId, boost::gregorian::date date, void* pAdvData);
+	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<double>& data);
+	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, void* pAdvData);
 
 private:
 	std::string m_agentId;
