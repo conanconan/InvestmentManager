@@ -9,7 +9,7 @@ public:
 	virtual ~CTwStockDataProvider();
 
 	virtual bool GetData(std::vector<std::string> dataId, 
-		boost::gregorian::date date, void* pAdvData);
+		boost::gregorian::date date, std::vector<CDataItem>& data);
 
 private:
 	std::string m_category;//tse: ¤W¥«, otc: ¤WÂd

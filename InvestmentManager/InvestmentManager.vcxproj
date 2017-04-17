@@ -192,6 +192,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DataItem.h" />
     <ClInclude Include="IDataProvider.h" />
     <ClInclude Include="IInvestMgr.h" />
     <ClInclude Include="InvestAgent.h" />

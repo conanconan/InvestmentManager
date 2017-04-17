@@ -19,7 +19,7 @@ CTwStockDataProvider::~CTwStockDataProvider()
 }
 
 bool CTwStockDataProvider::GetData(std::vector<std::string> dataId, 
-	boost::gregorian::date date, void* pAdvData)
+	boost::gregorian::date date, std::vector<CDataItem>& data)
 {
 	http_client httpClient(U("http://mis.twse.com.tw"));
 	

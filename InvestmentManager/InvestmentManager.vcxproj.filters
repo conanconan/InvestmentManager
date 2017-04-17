@@ -23,6 +23,7 @@
     <ClInclude Include="IInvestMgr.h" />
     <ClInclude Include="IDataProvider.h" />
     <ClInclude Include="TwStockDataProvider.h" />
+    <ClInclude Include="DataItem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -43,12 +43,12 @@ bool CInvestMgr::GetAgentIdList(std::vector<std::string>& idList) const
 }
 
 bool CInvestMgr::GetData(std::string agentId, std::vector<std::string> dataId, 
-	int year, int month, int day, void* pAdvData)
+	int year, int month, int day, std::vector<CDataItem>& data)
 {
 	auto agentIter = m_investAgents.find(agentId);
 	if (agentIter != m_investAgents.end())
 	{
-		return agentIter->second->GetData(dataId, boost::gregorian::date(year, month, day), pAdvData);
+		return agentIter->second->GetData(dataId, boost::gregorian::date(year, month, day), data);
 	}
 
 	return false;

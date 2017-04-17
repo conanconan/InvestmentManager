@@ -11,7 +11,7 @@ public:
 	virtual ~CInvestAgent();
 
 	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<double>& data);
-	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, void* pAdvData);
+	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<CDataItem>& data);
 
 private:
 	std::string m_agentId;

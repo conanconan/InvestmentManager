@@ -16,7 +16,7 @@ bool CInvestAgent::GetData(std::vector<std::string> dataId, boost::gregorian::da
 	return false;
 }
 
-bool CInvestAgent::GetData(std::vector<std::string> dataId, boost::gregorian::date date, void* pAdvData)
+bool CInvestAgent::GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<CDataItem>& data)
 {
-	return m_dataProvider->GetData(dataId, date, pAdvData);
+	return m_dataProvider->GetData(dataId, date, data);
 }
