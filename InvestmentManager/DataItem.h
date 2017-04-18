@@ -4,13 +4,13 @@
 class CDataItem
 {
 public:
-	std::string id;
-	std::string category;
-	std::string fullName;
-	std::string abbrevName;
-	float closingPrice;
-	float totalVolume;
-	float openingPrice;
-	float dayHighPrice;
-	float dayLowPrice;
+	std::wstring id;
+	std::wstring category;
+	std::wstring fullName;
+	std::wstring abbrevName;
+	std::wstring closingPrice;
+	std::wstring totalVolume;
+	std::wstring openingPrice;
+	std::wstring dayHighPrice;
+	std::wstring dayLowPrice;
 };
