@@ -51,7 +51,7 @@ bool ParseJsonToDataItem(const json::value& jsonData, std::vector<CDataItem>& da
 }
 
 bool CTwStockDataProvider::GetData(std::vector<std::string> dataId, 
-	boost::gregorian::date date, std::vector<CDataItem>& data)
+	boost::gregorian::date date, std::vector<CDataItem>& data) const
 {
 	http_client httpClient(U("http://mis.twse.com.tw"));
 	
