@@ -44,9 +44,6 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			std::vector<std::wstring> agentId;
-			investMgr->GetAgentIdList(agentId);
-
 			std::vector<std::wstring> dataId = { L"0050", L"2330" };
 			std::vector<CDataItem> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -63,14 +60,51 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			std::vector<std::wstring> agentId;
-			investMgr->GetAgentIdList(agentId);
-
 			CDataItem data;
 			investMgr->GetData(L"TwStock_OverTheCounterMarket",
 				L"6419", 2017, 4, 13, data);
 			Assert::IsTrue(data.id == L"6419");
 			
+			ReleaseInvestMgr(investMgr);
+		}
+
+		TEST_METHOD(GetSimpleDataMulti)
+		{
+			IInvestMgr* investMgr = nullptr;
+			CreateInvestMgr(&investMgr);
+
+			std::vector<std::wstring> dataId = { L"2618", L"2317" };
+
+			std::vector<CDataItem> data;
+			investMgr->GetData(L"TwStock_StockExchangeMarket",
+				dataId, 2017, 4, 13, data);
+
+			std::vector<std::wstring> closingPrice;
+			investMgr->GetSimpleData(L"TwStock_StockExchangeMarket",
+				dataId, 2017, 4, 13, closingPrice);
+
+			Assert::IsTrue(closingPrice.size() == data.size());
+			Assert::IsTrue(closingPrice[0] == data[0].closingPrice);
+			Assert::IsTrue(closingPrice[1] == data[1].closingPrice);
+
+			ReleaseInvestMgr(investMgr);
+		}
+
+		TEST_METHOD(GetSimpleDataSingle)
+		{
+			IInvestMgr* investMgr = nullptr;
+			CreateInvestMgr(&investMgr);
+
+			CDataItem data;
+			investMgr->GetData(L"TwStock_StockExchangeMarket",
+				L"2610", 2017, 4, 13, data);
+			
+			std::wstring closingPrice;
+			investMgr->GetSimpleData(L"TwStock_StockExchangeMarket", 
+				L"2610", 2017, 4, 13, closingPrice);
+
+			Assert::IsTrue(closingPrice == data.closingPrice);
+
 			ReleaseInvestMgr(investMgr);
 		}
     };
