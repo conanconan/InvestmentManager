@@ -9,4 +9,6 @@ class IDataProvider
 public:
 	virtual bool GetData(std::vector<std::string> dataId, 
 		boost::gregorian::date date, std::vector<CDataItem>& data) const = 0;
+	virtual bool GetData(std::string dataId,
+		boost::gregorian::date date, CDataItem& data) const = 0;
 };

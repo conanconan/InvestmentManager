@@ -98,3 +98,19 @@ bool CTwStockDataProvider::GetData(std::vector<std::string> dataId,
 
 	return false;
 }
+
+bool CTwStockDataProvider::GetData(std::string dataId,
+	boost::gregorian::date date, CDataItem& data) const
+{
+	std::vector<std::string> dataIdList;
+	dataIdList.push_back(dataId);
+	std::vector<CDataItem> dataList;
+
+	if (GetData(dataIdList, date, dataList))
+	{
+		data = dataList[0];
+		return true;
+	}
+
+	return false;
+}

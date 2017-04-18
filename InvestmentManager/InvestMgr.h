@@ -15,6 +15,8 @@ public:
 	virtual bool GetAgentIdList(std::vector<std::string>& idList) const;
 	virtual bool GetData(std::string agentId, std::vector<std::string> dataId, 
 		int year, int month, int day, std::vector<CDataItem>& data);
+	virtual bool GetData(std::string agentId, std::string dataId,
+		int year, int month, int day, CDataItem& data);
 
 private:
 	std::map<std::string, std::shared_ptr<CInvestAgent>> m_investAgents;

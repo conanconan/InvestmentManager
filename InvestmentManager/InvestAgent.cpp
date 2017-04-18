@@ -20,3 +20,8 @@ bool CInvestAgent::GetData(std::vector<std::string> dataId, boost::gregorian::da
 {
 	return m_dataProvider->GetData(dataId, date, data);
 }
+
+bool CInvestAgent::GetData(std::string dataId, boost::gregorian::date date, CDataItem& data)
+{
+	return m_dataProvider->GetData(dataId, date, data);
+}

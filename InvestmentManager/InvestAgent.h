@@ -12,6 +12,7 @@ public:
 
 	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<double>& data);
 	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<CDataItem>& data);
+	bool GetData(std::string dataId, boost::gregorian::date date, CDataItem& data);
 
 private:
 	std::string m_agentId;

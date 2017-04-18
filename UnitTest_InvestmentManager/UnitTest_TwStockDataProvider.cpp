@@ -39,15 +39,13 @@ namespace UnitTest_InvestmentManager
 			ReleaseInvestMgr(investMgr);
 		}
 
-		TEST_METHOD(GetData)
+		TEST_METHOD(GetDataMulti)
 		{
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
 			std::vector<std::string> agentId;
 			investMgr->GetAgentIdList(agentId);
-			Assert::IsTrue(Exist(agentId, "TwStock_StockExchangeMarket"));
-			Assert::IsTrue(Exist(agentId, "TwStock_OverTheCounterMarket"));
 
 			std::vector<std::string> dataId = { "0050", "2330" };
 			std::vector<CDataItem> data;
@@ -57,6 +55,22 @@ namespace UnitTest_InvestmentManager
 			Assert::IsTrue(data[0].id == L"0050" || data[1].id == L"0050");
 			Assert::IsTrue(data[0].id == L"2330" || data[1].id == L"2330");
 
+			ReleaseInvestMgr(investMgr);
+		}
+
+		TEST_METHOD(GetDataSingle)
+		{
+			IInvestMgr* investMgr = nullptr;
+			CreateInvestMgr(&investMgr);
+
+			std::vector<std::string> agentId;
+			investMgr->GetAgentIdList(agentId);
+
+			CDataItem data;
+			investMgr->GetData("TwStock_OverTheCounterMarket",
+				"6419", 2017, 4, 13, data);
+			Assert::IsTrue(data.id == L"6419");
+			
 			ReleaseInvestMgr(investMgr);
 		}
     };
