@@ -18,6 +18,38 @@ CTwStockDataProvider::~CTwStockDataProvider()
 {
 }
 
+bool ParseJsonToDataItem(const json::value jsonItem, CDataItem& item)
+{
+	item.id = jsonItem.as_object().find(L"c")->second.as_string();
+	item.fullName = jsonItem.as_object().find(L"nf")->second.as_string();
+	item.abbrevName = jsonItem.as_object().find(L"n")->second.as_string();
+	
+	item.closingPrice = jsonItem.as_object().find(L"z")->second.as_string(); (jsonItem.as_object(), L"z");
+	item.totalVolume = jsonItem.as_object().find(L"v")->second.as_string(); (jsonItem.as_object(), L"v");
+	item.openingPrice = jsonItem.as_object().find(L"o")->second.as_string(); (jsonItem.as_object(), L"o");
+	item.dayHighPrice = jsonItem.as_object().find(L"h")->second.as_string(); (jsonItem.as_object(), L"h");
+	item.dayLowPrice = jsonItem.as_object().find(L"l")->second.as_string(); (jsonItem.as_object(), L"l");
+
+	return true;
+}
+
+bool ParseJsonToDataItem(const json::value& jsonData, std::vector<CDataItem>& data)
+{
+	if (jsonData.is_array())
+	{
+		data.clear();
+		for (size_t i = 0; i < jsonData.size(); ++i)
+		{
+			data.push_back(CDataItem());
+			ParseJsonToDataItem(jsonData.at(i), data.back());
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 bool CTwStockDataProvider::GetData(std::vector<std::string> dataId, 
 	boost::gregorian::date date, std::vector<CDataItem>& data)
 {
@@ -32,17 +64,37 @@ bool CTwStockDataProvider::GetData(std::vector<std::string> dataId,
 			ex_chValue << "|";
 		}
 
-		ex_chValue << m_category.c_str() << "_" << id.c_str()
-				   << ".tw_" << formatedDate.c_str();
+		ex_chValue << m_category.c_str() << "_" << id.c_str() << ".tw";
 	}
 
-	uri_builder uriBuilder(U("/stock/api/getStockInfo.jsp?"));
-	uriBuilder.append_query(U("ex_ch"), ex_chValue.str().c_str())
-			  .append_query(U("_"), system_clock::now().time_since_epoch().count())
-			  .append_query(U("json"), "1")
-			  .append_query(U("delay"), "0");
+	http_response httpResponse = httpClient.request(methods::GET, U("/stock/index.jsp?lang=zh-tw")).get();
+	utility::string_t cookies = httpResponse.headers()[L"Set-Cookie"];
+	std::wstring sessionId = cookies.substr(0, cookies.find(';'));
 
-	http_response httpResponse = httpClient.request(methods::GET, uriBuilder.to_string()).get();
+	uri_builder uriBuilder(U("/stock/api/getStockInfo.jsp"));
+	uriBuilder.append_query(U("json"), "1")
+		.append_query(U("delay"), "0")
+		.append_query(U("d"), formatedDate.c_str())
+		.append_query(U("_"), duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count())
+		.append_query(U("ex_ch"), ex_chValue.str().c_str());
 
-	return true;
+	http_request request;
+	request.set_method(methods::GET);
+	request.headers().add(L"Cookie", sessionId.c_str());
+	request.set_request_uri(uriBuilder.to_uri());
+
+	httpResponse = httpClient.request(request).get();
+	if (httpResponse.status_code() == status_codes::OK)
+	{
+		utility::string_t content = httpResponse.extract_string().get()
+			.erase(0, 16);//erase firt 8 "\r\n";
+		json::value dataInJson = json::value::parse(content);
+		auto iter = dataInJson.as_object().find(L"msgArray");
+		if (iter != dataInJson.as_object().cend())
+		{
+			return ParseJsonToDataItem(iter->second, data);
+		}
+	}
+
+	return false;
 }
