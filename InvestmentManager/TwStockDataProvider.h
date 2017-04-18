@@ -5,15 +5,15 @@
 class CTwStockDataProvider : public IDataProvider
 {
 public:
-	CTwStockDataProvider(std::string category);
+	CTwStockDataProvider(std::wstring category);
 	virtual ~CTwStockDataProvider();
 
-	virtual bool GetData(std::vector<std::string> dataId, 
+	virtual bool GetData(std::vector<std::wstring> dataId, 
 		boost::gregorian::date date, std::vector<CDataItem>& data) const;
-	virtual bool GetData(std::string dataId,
+	virtual bool GetData(std::wstring dataId,
 		boost::gregorian::date date, CDataItem& data) const;
 
 private:
-	std::string m_category;//tse: 上市, otc: 上櫃
+	std::wstring m_category;//tse: 上市, otc: 上櫃
 };
 

@@ -13,8 +13,8 @@ namespace UnitTest_InvestmentManager
 	TEST_CLASS(UnitTest_TwStockDataProvider)
 	{
 	public:
-		bool Exist(const std::vector<std::string>& list,
-			std::string target)
+		bool Exist(const std::vector<std::wstring>& list,
+			std::wstring target)
 		{
 			for (auto item : list)
 			{
@@ -31,10 +31,10 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			std::vector<std::string> agentId;
+			std::vector<std::wstring> agentId;
 			investMgr->GetAgentIdList(agentId);
-			Assert::IsTrue(Exist(agentId, "TwStock_StockExchangeMarket"));
-			Assert::IsTrue(Exist(agentId, "TwStock_OverTheCounterMarket"));
+			Assert::IsTrue(Exist(agentId, L"TwStock_StockExchangeMarket"));
+			Assert::IsTrue(Exist(agentId, L"TwStock_OverTheCounterMarket"));
 
 			ReleaseInvestMgr(investMgr);
 		}
@@ -44,12 +44,12 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			std::vector<std::string> agentId;
+			std::vector<std::wstring> agentId;
 			investMgr->GetAgentIdList(agentId);
 
-			std::vector<std::string> dataId = { "0050", "2330" };
+			std::vector<std::wstring> dataId = { L"0050", L"2330" };
 			std::vector<CDataItem> data;
-			investMgr->GetData("TwStock_StockExchangeMarket",
+			investMgr->GetData(L"TwStock_StockExchangeMarket",
 				dataId, 2017, 4, 13, data);
 			Assert::IsTrue(data.size() == 2);
 			Assert::IsTrue(data[0].id == L"0050" || data[1].id == L"0050");
@@ -63,12 +63,12 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			std::vector<std::string> agentId;
+			std::vector<std::wstring> agentId;
 			investMgr->GetAgentIdList(agentId);
 
 			CDataItem data;
-			investMgr->GetData("TwStock_OverTheCounterMarket",
-				"6419", 2017, 4, 13, data);
+			investMgr->GetData(L"TwStock_OverTheCounterMarket",
+				L"6419", 2017, 4, 13, data);
 			Assert::IsTrue(data.id == L"6419");
 			
 			ReleaseInvestMgr(investMgr);

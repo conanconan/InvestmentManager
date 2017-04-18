@@ -7,15 +7,14 @@
 class CInvestAgent
 {
 public:
-	CInvestAgent(std::string agentId, std::shared_ptr<IDataProvider> dataProvider);
+	CInvestAgent(std::wstring agentId, std::shared_ptr<IDataProvider> dataProvider);
 	virtual ~CInvestAgent();
 
-	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<double>& data);
-	bool GetData(std::vector<std::string> dataId, boost::gregorian::date date, std::vector<CDataItem>& data);
-	bool GetData(std::string dataId, boost::gregorian::date date, CDataItem& data);
+	bool GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, std::vector<CDataItem>& data);
+	bool GetData(std::wstring dataId, boost::gregorian::date date, CDataItem& data);
 
 private:
-	std::string m_agentId;
+	std::wstring m_agentId;
 	std::shared_ptr<IDataProvider> m_dataProvider;
 };
 

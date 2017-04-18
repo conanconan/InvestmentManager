@@ -9,7 +9,7 @@ using namespace web::http;
 using namespace web::http::client;
 using namespace std::chrono;
 
-CTwStockDataProvider::CTwStockDataProvider(std::string category)
+CTwStockDataProvider::CTwStockDataProvider(std::wstring category)
 	: m_category(category)
 {
 }
@@ -50,21 +50,21 @@ bool ParseJsonToDataItem(const json::value& jsonData, std::vector<CDataItem>& da
 	return false;
 }
 
-bool CTwStockDataProvider::GetData(std::vector<std::string> dataId, 
+bool CTwStockDataProvider::GetData(std::vector<std::wstring> dataId, 
 	boost::gregorian::date date, std::vector<CDataItem>& data) const
 {
 	http_client httpClient(U("http://mis.twse.com.tw"));
 	
-	std::ostringstream ex_chValue;
-	std::string formatedDate = boost::gregorian::to_iso_string(date);
+	std::wstringstream ex_chValue;
+	std::wstring formatedDate = boost::gregorian::to_iso_wstring(date);
 	for (auto id : dataId)
 	{
 		if (ex_chValue.tellp() != std::streampos(0))
 		{
-			ex_chValue << "|";
+			ex_chValue << L"|";
 		}
 
-		ex_chValue << m_category.c_str() << "_" << id.c_str() << ".tw";
+		ex_chValue << m_category.c_str() << L"_" << id.c_str() << L".tw";
 	}
 
 	http_response httpResponse = httpClient.request(methods::GET, U("/stock/index.jsp?lang=zh-tw")).get();
@@ -99,10 +99,10 @@ bool CTwStockDataProvider::GetData(std::vector<std::string> dataId,
 	return false;
 }
 
-bool CTwStockDataProvider::GetData(std::string dataId,
+bool CTwStockDataProvider::GetData(std::wstring dataId,
 	boost::gregorian::date date, CDataItem& data) const
 {
-	std::vector<std::string> dataIdList;
+	std::vector<std::wstring> dataIdList;
 	dataIdList.push_back(dataId);
 	std::vector<CDataItem> dataList;
 

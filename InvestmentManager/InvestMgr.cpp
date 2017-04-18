@@ -18,17 +18,17 @@ CInvestMgr::~CInvestMgr()
 void CInvestMgr::Initialize()
 {
 	// ¤W¥«
-	m_investAgents["TwStock_StockExchangeMarket"] = std::shared_ptr<CInvestAgent>
-		(new CInvestAgent("TwStock_StockExchangeMarket", 
-			std::shared_ptr<IDataProvider>(new CTwStockDataProvider("tse"))));
+	m_investAgents[L"TwStock_StockExchangeMarket"] = std::shared_ptr<CInvestAgent>
+		(new CInvestAgent(L"TwStock_StockExchangeMarket", 
+			std::shared_ptr<IDataProvider>(new CTwStockDataProvider(L"tse"))));
 	// ¤WÂd
-	m_investAgents["TwStock_OverTheCounterMarket"] = std::shared_ptr<CInvestAgent>
-		(new CInvestAgent("TwStock_OverTheCounterMarket",
-			std::shared_ptr<IDataProvider>(new CTwStockDataProvider("otc"))));
+	m_investAgents[L"TwStock_OverTheCounterMarket"] = std::shared_ptr<CInvestAgent>
+		(new CInvestAgent(L"TwStock_OverTheCounterMarket",
+			std::shared_ptr<IDataProvider>(new CTwStockDataProvider(L"otc"))));
 	// ¿³Âd TwStock_EmergingStockMarket
 }
 
-bool CInvestMgr::GetAgentIdList(std::vector<std::string>& idList) const
+bool CInvestMgr::GetAgentIdList(std::vector<std::wstring>& idList) const
 {
 	if (!m_investAgents.empty())
 	{
@@ -42,7 +42,7 @@ bool CInvestMgr::GetAgentIdList(std::vector<std::string>& idList) const
 	return false;
 }
 
-bool CInvestMgr::GetData(std::string agentId, std::vector<std::string> dataId, 
+bool CInvestMgr::GetData(std::wstring agentId, std::vector<std::wstring> dataId, 
 	int year, int month, int day, std::vector<CDataItem>& data)
 {
 	auto agentIter = m_investAgents.find(agentId);
@@ -54,7 +54,7 @@ bool CInvestMgr::GetData(std::string agentId, std::vector<std::string> dataId,
 	return false;
 }
 
-bool CInvestMgr::GetData(std::string agentId, std::string dataId,
+bool CInvestMgr::GetData(std::wstring agentId, std::wstring dataId,
 	int year, int month, int day, CDataItem& data)
 {
 	auto agentIter = m_investAgents.find(agentId);
