@@ -35,7 +35,7 @@ bool ParseJsonToDataItem(const json::value jsonItem, CDataItem& item)
 
 bool ParseJsonToDataItem(const json::value& jsonData, std::vector<CDataItem>& data)
 {
-	if (jsonData.is_array())
+	if (jsonData.is_array() && jsonData.size() != 0)
 	{
 		data.clear();
 		for (size_t i = 0; i < jsonData.size(); ++i)
