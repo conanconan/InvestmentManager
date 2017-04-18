@@ -13,4 +13,5 @@ public:
 	std::wstring openingPrice;
 	std::wstring dayHighPrice;
 	std::wstring dayLowPrice;
+	std::wstring date;
 };

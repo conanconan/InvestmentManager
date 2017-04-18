@@ -64,6 +64,7 @@ namespace UnitTest_InvestmentManager
 			investMgr->GetData(L"TwStock_OverTheCounterMarket",
 				L"6419", 2017, 4, 13, data);
 			Assert::IsTrue(data.id == L"6419");
+			Assert::IsTrue(data.date == L"20170413");
 			
 			ReleaseInvestMgr(investMgr);
 		}
