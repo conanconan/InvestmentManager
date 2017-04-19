@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "InvestAgent.h"
 
+const boost::gregorian::date_duration oneDay(1);
 
 CInvestAgent::CInvestAgent(std::wstring agentId, std::shared_ptr<IDataProvider> dataProvider)
 	: m_agentId(agentId), m_dataProvider(dataProvider)
@@ -27,7 +28,6 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 	std::vector<std::shared_ptr<CDataItem>>& data)
 {
 	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
-	boost::gregorian::date_duration oneDay(1);
 	data.clear();
 
 	boost::gregorian::date date = fromDate;
