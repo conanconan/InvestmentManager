@@ -13,7 +13,7 @@ public:
 	bool GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
 		std::vector<CDataItem>& data);
 	bool GetData(std::wstring dataId, boost::gregorian::date date, CDataItem& data);
-	bool GetData(std::wstring dataId, boost::gregorian::date fromDate, int dayCount, 
+	bool GetData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount, 
 		std::vector<CDataItem>& data);
 	bool GetSimpleData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
 		std::vector<std::wstring>& data);

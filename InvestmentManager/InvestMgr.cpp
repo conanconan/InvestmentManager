@@ -67,7 +67,7 @@ bool CInvestMgr::GetData(std::wstring agentId, std::wstring dataId,
 }
 
 bool CInvestMgr::GetData(std::wstring agentId, std::wstring dataId,
-	int fromYear, int fromMonth, int fromDay, int dayCount, std::vector<CDataItem>& data)
+	int fromYear, int fromMonth, int fromDay, size_t dayCount, std::vector<CDataItem>& data)
 {
 	auto agentIter = m_investAgents.find(agentId);
 	if (agentIter != m_investAgents.end())
