@@ -22,15 +22,16 @@ bool ParseJsonToDataItem(const json::value jsonItem, CDataItem& item)
 {
 	item.date = jsonItem.as_object().find(L"d")->second.as_string();
 	
+	item.category = jsonItem.as_object().find(L"ex")->second.as_string();
 	item.id = jsonItem.as_object().find(L"c")->second.as_string();
 	item.fullName = jsonItem.as_object().find(L"nf")->second.as_string();
 	item.abbrevName = jsonItem.as_object().find(L"n")->second.as_string();
 	
-	item.closingPrice = jsonItem.as_object().find(L"z")->second.as_string(); (jsonItem.as_object(), L"z");
-	item.totalVolume = jsonItem.as_object().find(L"v")->second.as_string(); (jsonItem.as_object(), L"v");
-	item.openingPrice = jsonItem.as_object().find(L"o")->second.as_string(); (jsonItem.as_object(), L"o");
-	item.dayHighPrice = jsonItem.as_object().find(L"h")->second.as_string(); (jsonItem.as_object(), L"h");
-	item.dayLowPrice = jsonItem.as_object().find(L"l")->second.as_string(); (jsonItem.as_object(), L"l");
+	item.closingPrice = jsonItem.as_object().find(L"z")->second.as_string();
+	item.totalVolume = jsonItem.as_object().find(L"v")->second.as_string();
+	item.openingPrice = jsonItem.as_object().find(L"o")->second.as_string();
+	item.dayHighPrice = jsonItem.as_object().find(L"h")->second.as_string();
+	item.dayLowPrice = jsonItem.as_object().find(L"l")->second.as_string();
 
 	return true;
 }
