@@ -11,12 +11,12 @@ public:
 	virtual ~CInvestAgent();
 
 	bool GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
-		std::vector<CDataItem>& data);
-	bool GetData(std::wstring dataId, boost::gregorian::date date, CDataItem& data);
+		std::vector<std::shared_ptr<CDataItem>>& data);
+	bool GetData(std::wstring dataId, boost::gregorian::date date, std::shared_ptr<CDataItem>& data);
 	bool GetData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount, 
-		std::vector<CDataItem>& data);
+		std::vector<std::shared_ptr<CDataItem>>& data);
 	bool GetData(std::wstring dataId, boost::gregorian::date fromDate, 
-		boost::gregorian::date toDate, std::vector<CDataItem>& data);
+		boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data);
 	bool GetSimpleData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
 		std::vector<std::wstring>& data);
 	bool GetSimpleData(std::wstring dataId, boost::gregorian::date date, std::wstring& data);

@@ -45,12 +45,12 @@ namespace UnitTest_InvestmentManager
 			CreateInvestMgr(&investMgr);
 
 			std::vector<std::wstring> dataId = { L"0050", L"2330" };
-			std::vector<CDataItem> data;
+			std::vector<std::shared_ptr<CDataItem>> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
 				dataId, 2017, 4, 13, data);
 			Assert::IsTrue(data.size() == 2);
-			Assert::IsTrue(data[0].id == L"0050" || data[1].id == L"0050");
-			Assert::IsTrue(data[0].id == L"2330" || data[1].id == L"2330");
+			Assert::IsTrue(data[0]->id == L"0050" || data[1]->id == L"0050");
+			Assert::IsTrue(data[0]->id == L"2330" || data[1]->id == L"2330");
 
 			ReleaseInvestMgr(investMgr);
 		}
@@ -60,11 +60,11 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			CDataItem data;
+			std::shared_ptr<CDataItem> data;
 			investMgr->GetData(L"TwStock_OverTheCounterMarket",
 				L"6419", 2017, 4, 13, data);
-			Assert::IsTrue(data.id == L"6419");
-			Assert::IsTrue(data.date == L"20170413");
+			Assert::IsTrue(data->id == L"6419");
+			Assert::IsTrue(data->date == L"20170413");
 			
 			ReleaseInvestMgr(investMgr);
 		}
@@ -76,7 +76,7 @@ namespace UnitTest_InvestmentManager
 
 			std::vector<std::wstring> dataId = { L"2618", L"2317" };
 
-			std::vector<CDataItem> data;
+			std::vector<std::shared_ptr<CDataItem>> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
 				dataId, 2017, 4, 13, data);
 
@@ -85,8 +85,8 @@ namespace UnitTest_InvestmentManager
 				dataId, 2017, 4, 13, closingPrice);
 
 			Assert::IsTrue(closingPrice.size() == data.size());
-			Assert::IsTrue(closingPrice[0] == data[0].closingPrice);
-			Assert::IsTrue(closingPrice[1] == data[1].closingPrice);
+			Assert::IsTrue(closingPrice[0] == data[0]->closingPrice);
+			Assert::IsTrue(closingPrice[1] == data[1]->closingPrice);
 
 			ReleaseInvestMgr(investMgr);
 		}
@@ -96,7 +96,7 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			CDataItem data;
+			std::shared_ptr<CDataItem> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
 				L"2610", 2017, 4, 13, data);
 			
@@ -104,7 +104,7 @@ namespace UnitTest_InvestmentManager
 			investMgr->GetSimpleData(L"TwStock_StockExchangeMarket", 
 				L"2610", 2017, 4, 13, closingPrice);
 
-			Assert::IsTrue(closingPrice == data.closingPrice);
+			Assert::IsTrue(closingPrice == data->closingPrice);
 
 			ReleaseInvestMgr(investMgr);
 		}
@@ -114,7 +114,7 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			std::vector<CDataItem> data;
+			std::vector<std::shared_ptr<CDataItem>> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
 				L"9904", 2017, 2, 15, 30, data);
 			Assert::IsTrue(data.size() == 30);
@@ -127,12 +127,12 @@ namespace UnitTest_InvestmentManager
 			IInvestMgr* investMgr = nullptr;
 			CreateInvestMgr(&investMgr);
 
-			std::vector<CDataItem> data;
+			std::vector<std::shared_ptr<CDataItem>> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
 				L"2105", 2017, 2, 15, 
 				2017, 4, 18, data);
-			Assert::IsTrue(data[0].date == L"20170215");
-			Assert::IsTrue(data[data.size() - 1].date == L"20170418");
+			Assert::IsTrue(data[0]->date == L"20170215");
+			Assert::IsTrue(data[data.size() - 1]->date == L"20170418");
 
 			ReleaseInvestMgr(investMgr);
 		}

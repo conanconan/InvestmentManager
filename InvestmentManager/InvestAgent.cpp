@@ -12,18 +12,19 @@ CInvestAgent::~CInvestAgent()
 }
 
 bool CInvestAgent::GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
-	std::vector<CDataItem>& data)
+	std::vector<std::shared_ptr<CDataItem>>& data)
 {
 	return m_dataProvider->GetData(dataId, date, data);
 }
 
-bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date date, CDataItem& data)
+bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date date, 
+	std::shared_ptr<CDataItem>& data)
 {
 	return m_dataProvider->GetData(dataId, date, data);
 }
 
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
-	std::vector<CDataItem>& data)
+	std::vector<std::shared_ptr<CDataItem>>& data)
 {
 	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
 	boost::gregorian::date_duration oneDay(1);
@@ -32,7 +33,7 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 	boost::gregorian::date date = fromDate;
 	while (data.size() < dayCount && date <= today)
 	{
-		CDataItem dataItem;
+		std::shared_ptr<CDataItem> dataItem;
 		if (GetData(dataId, date, dataItem))
 		{
 			data.push_back(dataItem);
@@ -45,7 +46,7 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 }
 
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
-	boost::gregorian::date toDate, std::vector<CDataItem>& data)
+	boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data)
 {
 	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
 	boost::gregorian::date_duration oneDay(1);
@@ -55,7 +56,7 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 	boost::gregorian::date endDate = (toDate < today) ? toDate : today;
 	while (date <= endDate)
 	{
-		CDataItem dataItem;
+		std::shared_ptr<CDataItem> dataItem;
 		if (GetData(dataId, date, dataItem))
 		{
 			data.push_back(dataItem);
@@ -70,12 +71,12 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 bool CInvestAgent::GetSimpleData(std::vector<std::wstring> dataId, boost::gregorian::date date,
 	std::vector<std::wstring>& data)
 {
-	std::vector<CDataItem> fullData;
+	std::vector<std::shared_ptr<CDataItem>> fullData;
 	if (GetData(dataId, date, fullData))
 	{
 		data.clear();
 		std::transform(fullData.begin(), fullData.end(), std::back_inserter(data),
-			[](const auto& item) { return item.closingPrice; });
+			[](const auto& item) { return item->closingPrice; });
 
 		return true;
 	}
@@ -85,10 +86,10 @@ bool CInvestAgent::GetSimpleData(std::vector<std::wstring> dataId, boost::gregor
 
 bool CInvestAgent::GetSimpleData(std::wstring dataId, boost::gregorian::date date, std::wstring& data)
 {
-	CDataItem fullData;
+	std::shared_ptr<CDataItem> fullData;
 	if (GetData(dataId, date, fullData))
 	{
-		data = fullData.closingPrice;
+		data = fullData->closingPrice;
 		return true;
 	}
 

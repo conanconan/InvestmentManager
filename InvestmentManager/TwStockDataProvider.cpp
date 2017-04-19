@@ -18,32 +18,32 @@ CTwStockDataProvider::~CTwStockDataProvider()
 {
 }
 
-bool ParseJsonToDataItem(const json::value jsonItem, CDataItem& item)
+bool ParseJsonToDataItem(const json::value jsonItem, std::shared_ptr<CDataItem>& item)
 {
-	item.date = jsonItem.as_object().find(L"d")->second.as_string();
+	item->date = jsonItem.as_object().find(L"d")->second.as_string();
 	
-	item.category = jsonItem.as_object().find(L"ex")->second.as_string();
-	item.id = jsonItem.as_object().find(L"c")->second.as_string();
-	item.fullName = jsonItem.as_object().find(L"nf")->second.as_string();
-	item.abbrevName = jsonItem.as_object().find(L"n")->second.as_string();
+	item->category = jsonItem.as_object().find(L"ex")->second.as_string();
+	item->id = jsonItem.as_object().find(L"c")->second.as_string();
+	item->fullName = jsonItem.as_object().find(L"nf")->second.as_string();
+	item->abbrevName = jsonItem.as_object().find(L"n")->second.as_string();
 	
-	item.closingPrice = jsonItem.as_object().find(L"z")->second.as_string();
-	item.totalVolume = jsonItem.as_object().find(L"v")->second.as_string();
-	item.openingPrice = jsonItem.as_object().find(L"o")->second.as_string();
-	item.dayHighPrice = jsonItem.as_object().find(L"h")->second.as_string();
-	item.dayLowPrice = jsonItem.as_object().find(L"l")->second.as_string();
+	item->closingPrice = jsonItem.as_object().find(L"z")->second.as_string();
+	item->totalVolume = jsonItem.as_object().find(L"v")->second.as_string();
+	item->openingPrice = jsonItem.as_object().find(L"o")->second.as_string();
+	item->dayHighPrice = jsonItem.as_object().find(L"h")->second.as_string();
+	item->dayLowPrice = jsonItem.as_object().find(L"l")->second.as_string();
 
 	return true;
 }
 
-bool ParseJsonToDataItem(const json::value& jsonData, std::vector<CDataItem>& data)
+bool ParseJsonToDataItem(const json::value& jsonData, std::vector<std::shared_ptr<CDataItem>>& data)
 {
 	if (jsonData.is_array() && jsonData.size() != 0)
 	{
 		data.clear();
 		for (size_t i = 0; i < jsonData.size(); ++i)
 		{
-			data.push_back(CDataItem());
+			data.push_back(std::make_shared<CDataItem>());
 			ParseJsonToDataItem(jsonData.at(i), data.back());
 		}
 
@@ -54,7 +54,7 @@ bool ParseJsonToDataItem(const json::value& jsonData, std::vector<CDataItem>& da
 }
 
 bool CTwStockDataProvider::GetData(std::vector<std::wstring> dataId, 
-	boost::gregorian::date date, std::vector<CDataItem>& data) const
+	boost::gregorian::date date, std::vector<std::shared_ptr<CDataItem>>& data) const
 {
 	http_client httpClient(U("http://mis.twse.com.tw"));
 	
@@ -103,11 +103,11 @@ bool CTwStockDataProvider::GetData(std::vector<std::wstring> dataId,
 }
 
 bool CTwStockDataProvider::GetData(std::wstring dataId,
-	boost::gregorian::date date, CDataItem& data) const
+	boost::gregorian::date date, std::shared_ptr<CDataItem>& data) const
 {
 	std::vector<std::wstring> dataIdList;
 	dataIdList.push_back(dataId);
-	std::vector<CDataItem> dataList;
+	std::vector<std::shared_ptr<CDataItem>> dataList;
 
 	if (GetData(dataIdList, date, dataList))
 	{

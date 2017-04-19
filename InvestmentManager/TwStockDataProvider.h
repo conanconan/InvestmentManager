@@ -9,9 +9,9 @@ public:
 	virtual ~CTwStockDataProvider();
 
 	virtual bool GetData(std::vector<std::wstring> dataId, 
-		boost::gregorian::date date, std::vector<CDataItem>& data) const;
+		boost::gregorian::date date, std::vector<std::shared_ptr<CDataItem>>& data) const;
 	virtual bool GetData(std::wstring dataId,
-		boost::gregorian::date date, CDataItem& data) const;
+		boost::gregorian::date date, std::shared_ptr<CDataItem>& data) const;
 
 private:
 	std::wstring m_category;//tse: ¤W¥«, otc: ¤WÂd
