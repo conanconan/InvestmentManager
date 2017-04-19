@@ -79,6 +79,21 @@ bool CInvestMgr::GetData(std::wstring agentId, std::wstring dataId,
 	return false;
 }
 
+bool CInvestMgr::GetData(std::wstring agentId, std::wstring dataId,
+	int fromYear, int fromMonth, int fromDay,
+	int toYear, int toMonth, int toDay,
+	std::vector<CDataItem>& data)
+{
+	auto agentIter = m_investAgents.find(agentId);
+	if (agentIter != m_investAgents.end())
+	{
+		return agentIter->second->GetData(dataId, boost::gregorian::date(fromYear, fromMonth, fromDay),
+			boost::gregorian::date(toYear, toMonth, toDay), data);
+	}
+
+	return false;
+}
+
 bool CInvestMgr::GetSimpleData(std::wstring agentId, std::vector<std::wstring> dataId,
 	int year, int month, int day, std::vector<std::wstring>& data)
 {

@@ -19,6 +19,10 @@ public:
 		int year, int month, int day, CDataItem& data);
 	virtual bool GetData(std::wstring agentId, std::wstring dataId,
 		int fromYear, int fromMonth, int fromDay, size_t dayCount, std::vector<CDataItem>& data);
+	virtual bool GetData(std::wstring agentId, std::wstring dataId,
+		int fromYear, int fromMonth, int fromDay,
+		int toYear, int toMonth, int toDay,
+		std::vector<CDataItem>& data);
 	virtual bool GetSimpleData(std::wstring agentId, std::vector<std::wstring> dataId,
 		int year, int month, int day, std::vector<std::wstring>& data);
 	virtual bool GetSimpleData(std::wstring agentId, std::wstring dataId,
