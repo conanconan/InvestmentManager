@@ -22,6 +22,28 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date date, CDa
 	return m_dataProvider->GetData(dataId, date, data);
 }
 
+bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate, int dayCount, 
+	std::vector<CDataItem>& data)
+{
+	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
+	boost::gregorian::date_duration oneDay(1);
+	data.clear();
+	int count = dayCount;
+	boost::gregorian::date date = fromDate;
+	while (data.size() < dayCount && date <= today)
+	{
+		CDataItem dataItem;
+		if (GetData(dataId, date, dataItem))
+		{
+			data.push_back(dataItem);
+		}
+
+		date += oneDay;
+	}
+
+	return (data.size() == dayCount);
+}
+
 bool CInvestAgent::GetSimpleData(std::vector<std::wstring> dataId, boost::gregorian::date date,
 	std::vector<std::wstring>& data)
 {

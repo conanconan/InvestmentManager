@@ -108,5 +108,18 @@ namespace UnitTest_InvestmentManager
 
 			ReleaseInvestMgr(investMgr);
 		}
+
+		TEST_METHOD(GetDataWithDayCount)
+		{
+			IInvestMgr* investMgr = nullptr;
+			CreateInvestMgr(&investMgr);
+
+			std::vector<CDataItem> data;
+			investMgr->GetData(L"TwStock_StockExchangeMarket",
+				L"9904", 2017, 2, 15, 30, data);
+			Assert::IsTrue(data.size() == 30);
+
+			ReleaseInvestMgr(investMgr);
+		}
     };
 }
