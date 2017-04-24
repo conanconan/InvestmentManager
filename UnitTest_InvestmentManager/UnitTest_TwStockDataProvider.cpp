@@ -122,6 +122,34 @@ namespace UnitTest_InvestmentManager
 			ReleaseInvestMgr(investMgr);
 		}
 
+		TEST_METHOD(GetDataWithLargeDayCount)
+		{
+			IInvestMgr* investMgr = nullptr;
+			CreateInvestMgr(&investMgr);
+			// data only from 2015/03/23 orz
+			std::vector<std::shared_ptr<CDataItem>> data;
+			investMgr->GetData(L"TwStock_StockExchangeMarket",
+				L"2412", 2015, 3, 23, 200, data);
+			Assert::IsTrue(data.size() == 200);
+
+			ReleaseInvestMgr(investMgr);
+		}
+
+		TEST_METHOD(GetDataWithDayDurationInTheSameMonth)
+		{
+			IInvestMgr* investMgr = nullptr;
+			CreateInvestMgr(&investMgr);
+
+			std::vector<std::shared_ptr<CDataItem>> data;
+			investMgr->GetData(L"TwStock_StockExchangeMarket",
+				L"2105", 2017, 2, 15,
+				2017, 2, 22, data);
+			Assert::IsTrue(data[0]->date == L"20170215");
+			Assert::IsTrue(data[data.size() - 1]->date == L"20170222");
+
+			ReleaseInvestMgr(investMgr);
+		}
+
 		TEST_METHOD(GetDataWithDayDuration)
 		{
 			IInvestMgr* investMgr = nullptr;
@@ -133,6 +161,21 @@ namespace UnitTest_InvestmentManager
 				2017, 4, 18, data);
 			Assert::IsTrue(data[0]->date == L"20170215");
 			Assert::IsTrue(data[data.size() - 1]->date == L"20170418");
+
+			ReleaseInvestMgr(investMgr);
+		}
+
+		TEST_METHOD(GetDataWithLargeDayDuration)
+		{
+			IInvestMgr* investMgr = nullptr;
+			CreateInvestMgr(&investMgr);
+
+			std::vector<std::shared_ptr<CDataItem>> data;
+			investMgr->GetData(L"TwStock_StockExchangeMarket",
+				L"2884", 2016, 8, 15,
+				2017, 2, 15, data);
+			Assert::IsTrue(data[0]->date == L"20160815");
+			Assert::IsTrue(data[data.size() - 1]->date == L"20170215");
 
 			ReleaseInvestMgr(investMgr);
 		}

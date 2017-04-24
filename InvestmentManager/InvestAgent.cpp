@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "InvestAgent.h"
 
+const size_t fewDayBoundary = 50;
+const size_t aroundWorkingDayPerMonth = 22;
 const boost::gregorian::date_duration oneDay(1);
 
 CInvestAgent::CInvestAgent(std::wstring agentId, std::shared_ptr<IDataProvider> dataProvider)
@@ -27,9 +29,38 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date date,
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
 	std::vector<std::shared_ptr<CDataItem>>& data)
 {
-	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
-	data.clear();
+	if (dayCount <= fewDayBoundary)
+	{
+		return GetFewData(dataId, fromDate, dayCount, data);
+	}
 
+	boost::gregorian::date lastDate = 
+		(fromDate + boost::gregorian::months(1 + dayCount / aroundWorkingDayPerMonth)).end_of_month();
+	data.clear();
+	GetData(dataId, fromDate, lastDate, data);
+
+	if (data.size() > dayCount)
+	{
+		data.erase(data.begin() + dayCount, data.end());
+	}
+	else if (data.size() < dayCount)
+	{
+		std::vector<std::shared_ptr<CDataItem>> fewData;
+		GetFewData(dataId, lastDate + oneDay, dayCount - data.size(), fewData);
+
+		std::transform(fewData.begin(), fewData.end(), std::back_inserter(data),
+			[](const auto& item) { return item; });
+	}
+
+	return (data.size() == dayCount);
+}
+
+bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
+	std::vector<std::shared_ptr<CDataItem>>& data)
+{
+	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
+
+	data.clear();
 	boost::gregorian::date date = fromDate;
 	while (data.size() < dayCount && date <= today)
 	{
@@ -46,6 +77,32 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 }
 
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
+	boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data)
+{
+	std::vector<std::vector<std::shared_ptr<CDataItem>>> allData;
+	for (size_t i = 0, monthCount = 1 + (toDate.year() - fromDate.year()) * 12 + (toDate.month() - fromDate.month()); 
+		 i < monthCount; ++i)
+	{
+		boost::gregorian::date first(fromDate.year() + (i + fromDate.month() - 1) / 12,
+									 (i + fromDate.month() - 1) % 12 + 1,
+									 (i != 0) ? 1 : fromDate.day());
+		boost::gregorian::date last = (first.year() != toDate.year() || first.month() != toDate.month()) 
+			? first.end_of_month() : toDate;
+		allData.push_back(std::vector<std::shared_ptr<CDataItem>>());
+		GetFewData(dataId, first, last, allData.back());
+	}
+
+	data.clear();
+	for (auto& fewData : allData)
+	{
+		std::transform(fewData.begin(), fewData.end(), std::back_inserter(data),
+			[](const auto& item) { return item; });
+	}
+	
+	return true;
+}
+
+bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDate,
 	boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data)
 {
 	boost::gregorian::date today = boost::gregorian::day_clock::local_day();

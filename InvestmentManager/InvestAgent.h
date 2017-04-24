@@ -24,5 +24,10 @@ public:
 private:
 	std::wstring m_agentId;
 	std::shared_ptr<IDataProvider> m_dataProvider;
+
+	bool GetFewData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
+		std::vector<std::shared_ptr<CDataItem>>& data);
+	bool GetFewData(std::wstring dataId, boost::gregorian::date fromDate,
+		boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data);
 };
 
