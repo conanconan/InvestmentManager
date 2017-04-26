@@ -29,5 +29,8 @@ private:
 		std::vector<std::shared_ptr<CDataItem>>& data);
 	bool GetFewData(std::wstring dataId, boost::gregorian::date fromDate,
 		boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data);
+	static bool GetFewDataForMultiThread(CInvestAgent* agent, std::wstring dataId, 
+		boost::gregorian::date fromDate, boost::gregorian::date toDate, 
+		std::shared_ptr<std::vector<std::shared_ptr<CDataItem>>> data);
 };
 

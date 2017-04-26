@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "InvestAgent.h"
+//#include <thread>
 
 const size_t fewDayBoundary = 50;
 const size_t aroundWorkingDayPerMonth = 22;
@@ -76,10 +77,18 @@ bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDa
 	return (data.size() == dayCount);
 }
 
+bool CInvestAgent::GetFewDataForMultiThread(CInvestAgent* agent, std::wstring dataId, 
+	boost::gregorian::date fromDate, boost::gregorian::date toDate, 
+	std::shared_ptr<std::vector<std::shared_ptr<CDataItem>>> data)
+{
+	return agent->GetFewData(dataId, fromDate, toDate, *data.get());
+}
+
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 	boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data)
 {
-	std::vector<std::vector<std::shared_ptr<CDataItem>>> allData;
+	std::vector<std::shared_ptr<std::vector<std::shared_ptr<CDataItem>>>> allData;
+	std::vector<std::shared_ptr<std::thread>> threads;
 	for (size_t i = 0, monthCount = 1 + (toDate.year() - fromDate.year()) * 12 + (toDate.month() - fromDate.month()); 
 		 i < monthCount; ++i)
 	{
@@ -88,14 +97,23 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 									 (i != 0) ? 1 : fromDate.day());
 		boost::gregorian::date last = (first.year() != toDate.year() || first.month() != toDate.month()) 
 			? first.end_of_month() : toDate;
-		allData.push_back(std::vector<std::shared_ptr<CDataItem>>());
-		GetFewData(dataId, first, last, allData.back());
+		allData.push_back(std::make_shared<std::vector<std::shared_ptr<CDataItem>>>());
+		/*
+		threads.push_back(std::make_shared<std::thread>
+			(&CInvestAgent::GetFewDataForMultiThread, this, dataId, first, last, allData.back()));
+		*/
+		GetFewData(dataId, first, last, *allData.back().get());
 	}
-
+	/*
+	for (auto& thread : threads)
+	{
+		thread->join();
+	}
+	*/
 	data.clear();
 	for (auto& fewData : allData)
 	{
-		std::transform(fewData.begin(), fewData.end(), std::back_inserter(data),
+		std::transform(fewData->begin(), fewData->end(), std::back_inserter(data),
 			[](const auto& item) { return item; });
 	}
 	
