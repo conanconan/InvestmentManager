@@ -23,7 +23,7 @@ std::wstring RetrieveCategory(const std::wstring& content, std::wstring::size_ty
 	std::wstring::size_type end)
 {
 	std::wstring::size_type startCategory = content.find_first_not_of(L' ', start);
-	std::wstring::size_type endCategory = content.find_last_not_of(L' ', end);
+	std::wstring::size_type endCategory = content.find_last_not_of(L' ', end - 1);
 	if (startCategory == std::wstring::npos || endCategory == std::wstring::npos)
 	{
 		return L"";
@@ -66,36 +66,34 @@ bool RetrieveDataId(const std::wstring& content,
 	std::map<std::wstring, std::vector<std::wstring>>& dataId)
 {
 	dataId.clear();
-	const std::wstring::size_type categorySymbolSize = sizeof(L"<B>") / sizeof(wchar_t) - 1;
-	std::wstring::size_type startCategory = content.find(L"<B>");
-	if (startCategory == std::wstring::npos)
-	{
-		return false;
-	}
-	startCategory += categorySymbolSize;
-	std::wstring::size_type endCategory = content.find(L"<B>", startCategory);
-	while (startCategory != std::wstring::npos && endCategory != std::wstring::npos)
-	{
-		std::wstring category = RetrieveCategory(content, startCategory, endCategory - 1);
-		if (category.empty())
-		{
-			return false;
-		}
-	
-		std::wstring::size_type nextCategory = content.find(L"<B>", endCategory + categorySymbolSize);
-		RetrieveDataIdInCategory(content, endCategory + categorySymbolSize,
-			nextCategory, dataId[category]);
 
-		if (nextCategory == std::wstring::npos)
-		{
-			break;
-		}
-		startCategory = nextCategory + categorySymbolSize;
+	std::wstring::size_type startCategory = 0;
+	std::wstring::size_type endCategory = 0;
+	std::wstring::size_type nextStart = 0;
+	const std::wstring::size_type categorySymbolSize = sizeof(L"<B>") / sizeof(wchar_t) - 1;
+	while (startCategory != std::wstring::npos)
+	{
+		startCategory = content.find(L"<B>", nextStart);
 		if (startCategory == std::wstring::npos)
 		{
 			break;
 		}
+		startCategory += categorySymbolSize;
 		endCategory = content.find(L"<B>", startCategory);
+		if (endCategory == std::wstring::npos)
+		{
+			break;
+		}
+		nextStart = endCategory + categorySymbolSize;
+
+		std::wstring category = RetrieveCategory(content, startCategory, endCategory);
+		if (category.empty())
+		{
+			break;
+		}
+	
+		RetrieveDataIdInCategory(content, nextStart, content.find(L"<B>", nextStart), 
+			dataId[category]);
 	}
 
 	return !dataId.empty();
