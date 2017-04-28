@@ -8,12 +8,13 @@ public:
 	CTwStockDataProvider(std::wstring category);
 	virtual ~CTwStockDataProvider();
 
+	virtual bool GetDataId(std::map<std::wstring, std::vector<std::wstring>>& dataId) const;
 	virtual bool GetData(std::vector<std::wstring> dataId, 
 		boost::gregorian::date date, std::vector<std::shared_ptr<CDataItem>>& data) const;
 	virtual bool GetData(std::wstring dataId,
 		boost::gregorian::date date, std::shared_ptr<CDataItem>& data) const;
 
 private:
-	std::wstring m_category;//tse: 上市, otc: 上櫃
+	const std::wstring m_category;//tse: 上市, otc: 上櫃
 };
 

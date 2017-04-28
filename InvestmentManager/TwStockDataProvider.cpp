@@ -3,6 +3,7 @@
 #include "cpprest/http_client.h"
 #include <sstream>
 #include <chrono>
+#include "boost/locale/encoding.hpp"
 
 using namespace web;
 using namespace web::http;
@@ -16,6 +17,106 @@ CTwStockDataProvider::CTwStockDataProvider(std::wstring category)
 
 CTwStockDataProvider::~CTwStockDataProvider()
 {
+}
+
+std::wstring RetrieveCategory(const std::wstring& content, std::wstring::size_type start,
+	std::wstring::size_type end)
+{
+	std::wstring::size_type startCategory = content.find_first_not_of(L' ', start);
+	std::wstring::size_type endCategory = content.find_last_not_of(L' ', end);
+	if (startCategory == std::wstring::npos || endCategory == std::wstring::npos)
+	{
+		return L"";
+	}
+
+	return content.substr(startCategory, endCategory - startCategory + 1);
+}
+
+void RetrieveDataIdInCategory(const std::wstring& content,
+	std::wstring::size_type startPos, std::wstring::size_type endPos,
+	std::vector<std::wstring>& dataId)
+{
+	std::wstring::size_type startDataId = startPos;
+	std::wstring::size_type endDataId = std::wstring::npos;
+	const std::wstring::size_type dataIdSymbolPrefixSize =
+		sizeof(L"<tr><td bgcolor=#FAFAD2>") / sizeof(wchar_t) - 1;
+	while (startDataId != std::wstring::npos)
+	{
+		startDataId = content.find(L"<tr><td bgcolor=#FAFAD2>", startDataId);
+		if (startDataId == std::wstring::npos)
+		{
+			break;
+		}
+		startDataId += dataIdSymbolPrefixSize;
+		if (startDataId >= endPos)
+		{
+			break;
+		}
+		endDataId = content.find_first_of(static_cast<wchar_t>(12288), startDataId);
+		if (endDataId == std::wstring::npos)
+		{
+			break;
+		}
+
+		dataId.push_back(content.substr(startDataId, endDataId - startDataId));
+	}
+}
+
+bool RetrieveDataId(const std::wstring& content,
+	std::map<std::wstring, std::vector<std::wstring>>& dataId)
+{
+	dataId.clear();
+	const std::wstring::size_type categorySymbolSize = sizeof(L"<B>") / sizeof(wchar_t) - 1;
+	std::wstring::size_type startCategory = content.find(L"<B>");
+	if (startCategory == std::wstring::npos)
+	{
+		return false;
+	}
+	startCategory += categorySymbolSize;
+	std::wstring::size_type endCategory = content.find(L"<B>", startCategory);
+	while (startCategory != std::wstring::npos && endCategory != std::wstring::npos)
+	{
+		std::wstring category = RetrieveCategory(content, startCategory, endCategory - 1);
+		if (category.empty())
+		{
+			return false;
+		}
+	
+		std::wstring::size_type nextCategory = content.find(L"<B>", endCategory + categorySymbolSize);
+		RetrieveDataIdInCategory(content, endCategory + categorySymbolSize,
+			nextCategory, dataId[category]);
+
+		if (nextCategory == std::wstring::npos)
+		{
+			break;
+		}
+		startCategory = nextCategory + categorySymbolSize;
+		if (startCategory == std::wstring::npos)
+		{
+			break;
+		}
+		endCategory = content.find(L"<B>", startCategory);
+	}
+
+	return !dataId.empty();
+}
+
+bool CTwStockDataProvider::GetDataId(std::map<std::wstring, std::vector<std::wstring>>& dataId) const
+{
+	http_client httpClient(U("http://isin.twse.com.tw"));
+	std::wstringstream request;
+	request << L"/isin/C_public.jsp?strMode=" << ((m_category == L"tse") ? 2 : 4);
+	http_response httpResponse = httpClient.request(methods::GET, request.str()).get();
+	if (httpResponse.status_code() == status_codes::OK)
+	{
+		std::vector<unsigned char> vRawContent = httpResponse.extract_vector().get();
+		std::string sRawContent(vRawContent.begin(), vRawContent.end());
+		std::wstring UTFContent = boost::locale::conv::to_utf<wchar_t> (sRawContent, "BIG5");
+		RetrieveDataId(UTFContent, dataId);
+		return true;
+	}
+
+	return false;
 }
 
 bool ParseJsonToDataItem(const json::value jsonItem, std::shared_ptr<CDataItem>& item)
