@@ -171,7 +171,7 @@ bool CTwStockDataProvider::GetData(std::vector<std::wstring> dataId,
 		ex_chValue << m_category.c_str() << L"_" << id.c_str() << L".tw";
 	}
 
-	http_response httpResponse = httpClient.request(methods::GET, U("/stock/index.jsp?lang=zh-tw")).get();
+	http_response httpResponse = httpClient.request(methods::GET, U("/stock/fibest.jsp?lang=zh-tw")).get();
 	utility::string_t cookies = httpResponse.headers()[L"Set-Cookie"];
 	std::wstring sessionId = cookies.substr(0, cookies.find(';'));
 
