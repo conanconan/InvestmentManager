@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "InvestAgent.h"
-//#include <thread>
+#include <thread>
 
 const size_t fewDayBoundary = 50;
 const size_t aroundWorkingDayPerMonth = 22;
@@ -112,18 +112,16 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 		boost::gregorian::date last = (first.year() != toDate.year() || first.month() != toDate.month()) 
 			? first.end_of_month() : toDate;
 		allData.push_back(std::make_shared<std::vector<CDataItem>>());
-		/*
+
 		threads.push_back(std::make_shared<std::thread>
 			(&CInvestAgent::GetFewDataForMultiThread, this, dataId, first, last, allData.back()));
-		*/
-		GetFewData(dataId, first, last, *allData.back());
 	}
-	/*
+
 	for (auto& thread : threads)
 	{
 		thread->join();
 	}
-	*/
+
 	data.clear();
 	for (auto& fewData : allData)
 	{
