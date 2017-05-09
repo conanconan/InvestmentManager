@@ -16,19 +16,33 @@ CInvestAgent::~CInvestAgent()
 }
 
 bool CInvestAgent::GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
-	std::vector<std::shared_ptr<CDataItem>>& data)
+	std::vector<CDataItem>& data)
 {
-	return m_dataProvider->GetData(dataId, date, data);
+	data.clear();
+	for (const auto& id : dataId)
+	{
+		CDataItem item;
+		if (m_dataProvider->GetData(id, date, item))
+		{
+			data.push_back(item);
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date date, 
-	std::shared_ptr<CDataItem>& data)
+	CDataItem& data)
 {
 	return m_dataProvider->GetData(dataId, date, data);
 }
 
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
-	std::vector<std::shared_ptr<CDataItem>>& data)
+	std::vector<CDataItem>& data)
 {
 	if (dayCount <= fewDayBoundary)
 	{
@@ -46,7 +60,7 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 	}
 	else if (data.size() < dayCount)
 	{
-		std::vector<std::shared_ptr<CDataItem>> fewData;
+		std::vector<CDataItem> fewData;
 		GetFewData(dataId, lastDate + oneDay, dayCount - data.size(), fewData);
 
 		std::transform(fewData.begin(), fewData.end(), std::back_inserter(data),
@@ -57,7 +71,7 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 }
 
 bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
-	std::vector<std::shared_ptr<CDataItem>>& data)
+	std::vector<CDataItem>& data)
 {
 	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
 
@@ -65,7 +79,7 @@ bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDa
 	boost::gregorian::date date = fromDate;
 	while (data.size() < dayCount && date <= today)
 	{
-		std::shared_ptr<CDataItem> dataItem;
+		CDataItem dataItem;
 		if (GetData(dataId, date, dataItem))
 		{
 			data.push_back(dataItem);
@@ -79,15 +93,15 @@ bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDa
 
 bool CInvestAgent::GetFewDataForMultiThread(CInvestAgent* agent, std::wstring dataId, 
 	boost::gregorian::date fromDate, boost::gregorian::date toDate, 
-	std::shared_ptr<std::vector<std::shared_ptr<CDataItem>>> data)
+	std::shared_ptr<std::vector<CDataItem>> data)
 {
-	return agent->GetFewData(dataId, fromDate, toDate, *data.get());
+	return agent->GetFewData(dataId, fromDate, toDate, *data);
 }
 
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
-	boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data)
+	boost::gregorian::date toDate, std::vector<CDataItem>& data)
 {
-	std::vector<std::shared_ptr<std::vector<std::shared_ptr<CDataItem>>>> allData;
+	std::vector<std::shared_ptr<std::vector<CDataItem>>> allData;
 	std::vector<std::shared_ptr<std::thread>> threads;
 	for (size_t i = 0, monthCount = 1 + (toDate.year() - fromDate.year()) * 12 + (toDate.month() - fromDate.month()); 
 		 i < monthCount; ++i)
@@ -97,12 +111,12 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 									 (i != 0) ? 1 : fromDate.day());
 		boost::gregorian::date last = (first.year() != toDate.year() || first.month() != toDate.month()) 
 			? first.end_of_month() : toDate;
-		allData.push_back(std::make_shared<std::vector<std::shared_ptr<CDataItem>>>());
+		allData.push_back(std::make_shared<std::vector<CDataItem>>());
 		/*
 		threads.push_back(std::make_shared<std::thread>
 			(&CInvestAgent::GetFewDataForMultiThread, this, dataId, first, last, allData.back()));
 		*/
-		GetFewData(dataId, first, last, *allData.back().get());
+		GetFewData(dataId, first, last, *allData.back());
 	}
 	/*
 	for (auto& thread : threads)
@@ -121,7 +135,7 @@ bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 }
 
 bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDate,
-	boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data)
+	boost::gregorian::date toDate, std::vector<CDataItem>& data)
 {
 	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
 	boost::gregorian::date_duration oneDay(1);
@@ -131,7 +145,7 @@ bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDa
 	boost::gregorian::date endDate = (toDate < today) ? toDate : today;
 	while (date <= endDate)
 	{
-		std::shared_ptr<CDataItem> dataItem;
+		CDataItem dataItem;
 		if (GetData(dataId, date, dataItem))
 		{
 			data.push_back(dataItem);
@@ -146,12 +160,12 @@ bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDa
 bool CInvestAgent::GetSimpleData(std::vector<std::wstring> dataId, boost::gregorian::date date,
 	std::vector<std::wstring>& data)
 {
-	std::vector<std::shared_ptr<CDataItem>> fullData;
+	std::vector<CDataItem> fullData;
 	if (GetData(dataId, date, fullData))
 	{
 		data.clear();
 		std::transform(fullData.begin(), fullData.end(), std::back_inserter(data),
-			[](const auto& item) { return item->closingPrice; });
+			[](const auto& item) { return item.closingPrice; });
 
 		return true;
 	}
@@ -161,10 +175,10 @@ bool CInvestAgent::GetSimpleData(std::vector<std::wstring> dataId, boost::gregor
 
 bool CInvestAgent::GetSimpleData(std::wstring dataId, boost::gregorian::date date, std::wstring& data)
 {
-	std::shared_ptr<CDataItem> fullData;
+	CDataItem fullData;
 	if (GetData(dataId, date, fullData))
 	{
-		data = fullData->closingPrice;
+		data = fullData.closingPrice;
 		return true;
 	}
 

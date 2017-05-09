@@ -11,12 +11,12 @@ public:
 	virtual ~CInvestAgent();
 
 	bool GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
-		std::vector<std::shared_ptr<CDataItem>>& data);
-	bool GetData(std::wstring dataId, boost::gregorian::date date, std::shared_ptr<CDataItem>& data);
+		std::vector<CDataItem>& data);
+	bool GetData(std::wstring dataId, boost::gregorian::date date, CDataItem& data);
 	bool GetData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount, 
-		std::vector<std::shared_ptr<CDataItem>>& data);
+		std::vector<CDataItem>& data);
 	bool GetData(std::wstring dataId, boost::gregorian::date fromDate, 
-		boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data);
+		boost::gregorian::date toDate, std::vector<CDataItem>& data);
 	bool GetSimpleData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
 		std::vector<std::wstring>& data);
 	bool GetSimpleData(std::wstring dataId, boost::gregorian::date date, std::wstring& data);
@@ -26,11 +26,11 @@ private:
 	std::shared_ptr<IDataProvider> m_dataProvider;
 
 	bool GetFewData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
-		std::vector<std::shared_ptr<CDataItem>>& data);
+		std::vector<CDataItem>& data);
 	bool GetFewData(std::wstring dataId, boost::gregorian::date fromDate,
-		boost::gregorian::date toDate, std::vector<std::shared_ptr<CDataItem>>& data);
+		boost::gregorian::date toDate, std::vector<CDataItem>& data);
 	static bool GetFewDataForMultiThread(CInvestAgent* agent, std::wstring dataId, 
 		boost::gregorian::date fromDate, boost::gregorian::date toDate, 
-		std::shared_ptr<std::vector<std::shared_ptr<CDataItem>>> data);
+		std::shared_ptr<std::vector<CDataItem>> data);
 };
 
