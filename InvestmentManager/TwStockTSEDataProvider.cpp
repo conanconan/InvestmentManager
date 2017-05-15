@@ -12,10 +12,16 @@ using namespace web::http::client;
 using namespace std::chrono;
 
 CTwStockTSEDataProvider::CTwStockTSEDataProvider()
+    : m_beginDate(1992, 1, 4)
 {}
 
 CTwStockTSEDataProvider::~CTwStockTSEDataProvider()
 {}
+
+boost::gregorian::date CTwStockTSEDataProvider::DataBeginsOn() const
+{
+    return m_beginDate;
+}
 
 bool CTwStockTSEDataProvider::GetDataId(std::map<std::wstring, std::vector<std::wstring>>& dataId) const
 {
@@ -30,6 +36,11 @@ bool CTwStockTSEDataProvider::GetRealTimeData(std::wstring dataId, CDataItem& da
 bool CTwStockTSEDataProvider::GetData(std::wstring dataId,
 	boost::gregorian::date date, CDataItem& data) const
 {
+    if (date < m_beginDate)
+    {
+        return false;
+    }
+
     std::vector<CDataItem> oneMonthData;
     if (GetOneMonthData(dataId, date, oneMonthData))
     {
@@ -132,6 +143,12 @@ std::wstring RetrieveAbbrevNameInTable(const std::wstring& table,
 bool CTwStockTSEDataProvider::GetOneMonthData(std::wstring dataId,
     boost::gregorian::date date, std::vector<CDataItem>& data) const
 {
+    if (boost::gregorian::date(date.year(), date.month(), 1)
+        < boost::gregorian::date(m_beginDate.year(), m_beginDate.month(), 1))
+    {
+        return false;
+    }
+
 	http_client httpClient(U("http://www.twse.com.tw/ch/trading/exchange/STOCK_DAY/STOCK_DAYMAIN.php"));
 
 	std::wstringstream resuestBody;

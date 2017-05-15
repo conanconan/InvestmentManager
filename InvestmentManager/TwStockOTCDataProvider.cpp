@@ -11,10 +11,16 @@ using namespace web::http::client;
 using namespace std::chrono;
 
 CTwStockOTCDataProvider::CTwStockOTCDataProvider()
+    : m_beginDate(2007, 4, 24)
 {}
 
 CTwStockOTCDataProvider::~CTwStockOTCDataProvider()
 {}
+
+boost::gregorian::date CTwStockOTCDataProvider::DataBeginsOn() const
+{
+    return m_beginDate;
+}
 
 bool CTwStockOTCDataProvider::GetDataId(std::map<std::wstring, std::vector<std::wstring>>& dataId) const
 {
@@ -97,6 +103,11 @@ bool GetOTCAllData(std::wstring dataId,
 
 bool CTwStockOTCDataProvider::GetData(std::wstring dataId, boost::gregorian::date date, CDataItem & data) const
 {
+    if (date < m_beginDate)
+    {
+        return false;
+    }
+
     std::vector<CDataItem> allData;
     if (GetOTCAllData(dataId, date, allData))
     {
@@ -115,6 +126,12 @@ bool CTwStockOTCDataProvider::GetData(std::wstring dataId, boost::gregorian::dat
 
 bool CTwStockOTCDataProvider::GetOneMonthData(std::wstring dataId, boost::gregorian::date date, std::vector<CDataItem>& data) const
 {
+    if (boost::gregorian::date(date.year(), date.month(), 1)
+        < boost::gregorian::date(m_beginDate.year(), m_beginDate.month(), 1))
+    {
+        return false;
+    }
+
     data.clear();
     boost::gregorian::date dateInMonth(date.year(), date.month(), 1);
     while (dateInMonth <= date.end_of_month())
