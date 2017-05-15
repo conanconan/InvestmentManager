@@ -200,7 +200,9 @@
     <ClInclude Include="InvestMgr.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TwStockDataProvider.h" />
+    <ClInclude Include="TwStockOTCDataProvider.h" />
+    <ClInclude Include="TwStockTSEDataProvider.h" />
+    <ClInclude Include="TwStockUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -215,7 +217,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TwStockDataProvider.cpp" />
+    <ClCompile Include="TwStockOTCDataProvider.cpp" />
+    <ClCompile Include="TwStockTSEDataProvider.cpp" />
+    <ClCompile Include="TwStockUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

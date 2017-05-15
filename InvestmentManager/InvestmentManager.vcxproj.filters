@@ -12,7 +12,9 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="InvestMgr.cpp" />
     <ClCompile Include="InvestAgent.cpp" />
-    <ClCompile Include="TwStockDataProvider.cpp" />
+    <ClCompile Include="TwStockTSEDataProvider.cpp" />
+    <ClCompile Include="TwStockOTCDataProvider.cpp" />
+    <ClCompile Include="TwStockUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InvestmentManager.h" />
@@ -22,8 +24,10 @@
     <ClInclude Include="InvestAgent.h" />
     <ClInclude Include="IInvestMgr.h" />
     <ClInclude Include="IDataProvider.h" />
-    <ClInclude Include="TwStockDataProvider.h" />
     <ClInclude Include="DataItem.h" />
+    <ClInclude Include="TwStockTSEDataProvider.h" />
+    <ClInclude Include="TwStockOTCDataProvider.h" />
+    <ClInclude Include="TwStockUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
