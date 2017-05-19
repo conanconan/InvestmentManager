@@ -198,6 +198,7 @@
     <ClInclude Include="InvestAgent.h" />
     <ClInclude Include="InvestmentManager.h" />
     <ClInclude Include="InvestMgr.h" />
+    <ClInclude Include="MovingAverage.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TwStockOTCDataProvider.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="InvestAgent.cpp" />
     <ClCompile Include="InvestmentManager.cpp" />
     <ClCompile Include="InvestMgr.cpp" />
+    <ClCompile Include="MovingAverage.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

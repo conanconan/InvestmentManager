@@ -15,6 +15,7 @@
     <ClCompile Include="TwStockTSEDataProvider.cpp" />
     <ClCompile Include="TwStockOTCDataProvider.cpp" />
     <ClCompile Include="TwStockUtility.cpp" />
+    <ClCompile Include="MovingAverage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InvestmentManager.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="TwStockTSEDataProvider.h" />
     <ClInclude Include="TwStockOTCDataProvider.h" />
     <ClInclude Include="TwStockUtility.h" />
+    <ClInclude Include="MovingAverage.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -3,6 +3,7 @@
 #include "InvestmentManager/IInvestMgr.h"
 #include "InvestmentManager/InvestmentManager.h"
 #include "InvestmentManager/DataItem.h"
+#include "InvestmentManager/MovingAverage.h"
 #include <string>
 #include <vector>
 
@@ -155,5 +156,34 @@ namespace UnitTest_InvestmentManager
 
 			ReleaseInvestMgr(investMgr);
 		}
+    };
+
+    TEST_CLASS(UnitTest_MovingAverage)
+    {
+    public:
+        TEST_METHOD(InsufficientSample)
+        {
+            CMovingAverage ma(5);
+            ma.UpdateData(1.0);
+            ma.UpdateData(2.0);
+            ma.UpdateData(3.0);
+            ma.UpdateData(4.0);
+            Assert::IsTrue(ma.GetResult() == 0.0);
+        }
+
+        TEST_METHOD(SimpleTest)
+        {
+            CMovingAverage ma(5);
+            ma.UpdateData(1.0);
+            ma.UpdateData(2.0);
+            ma.UpdateData(3.0);
+            ma.UpdateData(4.0);
+            ma.UpdateData(5.0);
+            Assert::IsTrue(ma.GetResult() == 3.0);
+            ma.UpdateData(6.0);
+            Assert::IsTrue(ma.GetResult() == 4.0);
+            ma.UpdateData(7.0);
+            Assert::IsTrue(ma.GetResult() == 5.0);
+        }
     };
 }

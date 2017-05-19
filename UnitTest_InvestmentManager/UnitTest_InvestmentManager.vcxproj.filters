@@ -16,10 +16,12 @@
     <ClCompile Include="UnitTestApp.xaml.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="UnitTest_TwStockDataProvider.cpp" />
+    <ClCompile Include="..\InvestmentManager\MovingAverage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="UnitTestApp.xaml.h" />
+    <ClInclude Include="..\InvestmentManager\MovingAverage.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="UnitTestApp.rd.xml" />
