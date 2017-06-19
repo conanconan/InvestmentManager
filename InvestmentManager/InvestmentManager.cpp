@@ -2,9 +2,9 @@
 #include "InvestmentManager.h"
 #include "InvestMgr.h"
 
-INVESTMGR_DLLAPI bool CreateInvestMgr(IInvestMgr** ppInvestMgr)
+INVESTMGR_DLLAPI bool CreateInvestMgr(const std::wstring& storagePath, IInvestMgr** ppInvestMgr)
 {
-	*ppInvestMgr = new CInvestMgr();
+	*ppInvestMgr = new CInvestMgr(storagePath);
 	return true;
 }
 

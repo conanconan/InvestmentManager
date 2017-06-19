@@ -3,11 +3,12 @@
 #include <algorithm>
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "InvestAgent.h"
-#include "TwStockTSEDataProvider.h"
-#include "TwStockOTCDataProvider.h"
+#include "DataProviderFactory.h"
+#include "InvestDbFactory.h"
 
 
-CInvestMgr::CInvestMgr()
+CInvestMgr::CInvestMgr(const std::wstring& storagePath)
+    : m_storagePath(storagePath)
 {
 	Initialize();
 }
@@ -20,12 +21,12 @@ void CInvestMgr::Initialize()
 {
 	// ¤W¥«
 	m_investAgents[L"TwStock_StockExchangeMarket"] = std::shared_ptr<CInvestAgent>
-		(new CInvestAgent(L"TwStock_StockExchangeMarket", 
-			std::shared_ptr<IDataProvider>(new CTwStockTSEDataProvider())));
+		(new CInvestAgent(CreateDataProvider(L"TwStock_StockExchangeMarket"), 
+            CreateInvestDb(L"TwStock_StockExchangeMarket", m_storagePath)));
 	// ¤WÂd
 	m_investAgents[L"TwStock_OverTheCounterMarket"] = std::shared_ptr<CInvestAgent>
-		(new CInvestAgent(L"TwStock_OverTheCounterMarket",
-			std::shared_ptr<IDataProvider>(new CTwStockOTCDataProvider())));
+		(new CInvestAgent(CreateDataProvider(L"TwStock_OverTheCounterMarket"), 
+            CreateInvestDb(L"TwStock_OverTheCounterMarket", m_storagePath)));
 	// ¿³Âd TwStock_EmergingStockMarket
 }
 

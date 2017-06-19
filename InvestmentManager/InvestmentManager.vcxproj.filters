@@ -17,6 +17,8 @@
     <ClCompile Include="TwStockUtility.cpp" />
     <ClCompile Include="MovingAverage.cpp" />
     <ClCompile Include="InvestDb.cpp" />
+    <ClCompile Include="DataProviderFactory.cpp" />
+    <ClCompile Include="InvestDbFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InvestmentManager.h" />
@@ -32,6 +34,8 @@
     <ClInclude Include="TwStockUtility.h" />
     <ClInclude Include="MovingAverage.h" />
     <ClInclude Include="InvestDb.h" />
+    <ClInclude Include="DataProviderFactory.h" />
+    <ClInclude Include="InvestDbFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

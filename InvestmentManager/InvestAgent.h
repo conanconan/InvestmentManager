@@ -3,11 +3,13 @@
 #include <memory>
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "IDataProvider.h"
+#include "InvestDb.h"
 
 class CInvestAgent
 {
 public:
-	CInvestAgent(std::wstring agentId, std::shared_ptr<IDataProvider> dataProvider);
+	CInvestAgent(std::shared_ptr<IDataProvider> dataProvider, 
+        std::shared_ptr<CInvestDb> db);
 	virtual ~CInvestAgent();
 
 	bool GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
@@ -22,8 +24,8 @@ public:
 	bool GetSimpleData(std::wstring dataId, boost::gregorian::date date, std::wstring& data);
 
 private:
-	std::wstring m_agentId;
 	std::shared_ptr<IDataProvider> m_dataProvider;
+    std::shared_ptr<CInvestDb> m_db;
 
 	bool GetFewData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
 		std::vector<CDataItem>& data);

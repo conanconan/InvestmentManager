@@ -6,8 +6,9 @@ const size_t fewDayBoundary = 50;
 const size_t aroundWorkingDayPerMonth = 22;
 const boost::gregorian::date_duration oneDay(1);
 
-CInvestAgent::CInvestAgent(std::wstring agentId, std::shared_ptr<IDataProvider> dataProvider)
-	: m_agentId(agentId), m_dataProvider(dataProvider)
+CInvestAgent::CInvestAgent(std::shared_ptr<IDataProvider> dataProvider, 
+    std::shared_ptr<CInvestDb> db)
+	: m_dataProvider(dataProvider), m_db(db)
 {
 }
 

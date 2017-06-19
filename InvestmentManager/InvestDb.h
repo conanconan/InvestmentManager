@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <map>
 #include <experimental/filesystem>
 
 struct sqlite3;
@@ -8,8 +9,8 @@ struct sqlite3;
 class CInvestDb
 {
 public:
-    CInvestDb(std::experimental::filesystem::path dbFilePath, 
-        std::vector<std::wstring> dbTables);
+    CInvestDb(const std::experimental::filesystem::path& dbFilePath, 
+        const std::map<std::wstring, std::vector<std::wstring>>& dbTable);
     virtual ~CInvestDb();
 
     bool InsertData(const std::wstring& table, const std::vector<std::wstring>& data);
@@ -19,8 +20,10 @@ public:
 private:
     sqlite3* m_pDb;
 
-    void CreateDb(std::experimental::filesystem::path dbFilePath,
-        std::vector<std::wstring> tables);
+    std::wstring CreateTableCmd(const std::pair<std::wstring, 
+        const std::vector<std::wstring>>& dbTable);
+    void CreateDb(const std::experimental::filesystem::path& dbFilePath,
+        const std::map<std::wstring, std::vector<std::wstring>>& dbTable);
     void ReleaseDb();
 };
 

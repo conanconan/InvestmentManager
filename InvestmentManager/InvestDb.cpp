@@ -4,11 +4,11 @@
 #include <sstream>
 
 
-CInvestDb::CInvestDb(std::experimental::filesystem::path dbFilePath,
-    std::vector<std::wstring> dbTables)
+CInvestDb::CInvestDb(const std::experimental::filesystem::path& dbFilePath,
+    const std::map<std::wstring, std::vector<std::wstring>>& dbTable)
     : m_pDb(NULL)
 {
-    CreateDb(dbFilePath, dbTables);
+    CreateDb(dbFilePath, dbTable);
 }
 
 CInvestDb::~CInvestDb()
@@ -16,8 +16,22 @@ CInvestDb::~CInvestDb()
     ReleaseDb();
 }
 
-void CInvestDb::CreateDb(std::experimental::filesystem::path dbFilePath,
-    std::vector<std::wstring> dbTables)
+std::wstring CInvestDb::CreateTableCmd(const std::pair<std::wstring, 
+    const std::vector<std::wstring>>& dbTable)
+{
+    std::wstring tableCmd = dbTable.first + L"(";
+    auto& params = dbTable.second;
+    for (size_t i = 0; i < params.size(); ++i)
+    {
+        tableCmd += params[i] + ((i != params.size() - 1) ? L", " : L"");
+    }
+    tableCmd += L")";
+
+    return tableCmd;
+}
+
+void CInvestDb::CreateDb(const std::experimental::filesystem::path& dbFilePath,
+    const std::map<std::wstring, std::vector<std::wstring>>& dbTable)
 {
     std::experimental::filesystem::create_directories(dbFilePath.parent_path());
     if (SQLITE_OK != sqlite3_open16(dbFilePath.c_str(), &m_pDb))
@@ -27,9 +41,9 @@ void CInvestDb::CreateDb(std::experimental::filesystem::path dbFilePath,
     }
 
     std::wstring sqlCreateTablePrefix(L"create table if not exists ");
-    for (auto& table : dbTables)
+    for (auto& table : dbTable)
     {
-        std::wstring sqlCmd = sqlCreateTablePrefix + table + L";";
+        std::wstring sqlCmd = sqlCreateTablePrefix + CreateTableCmd(table) + L";";
         sqlite3_stmt* stmt = nullptr;
         if (sqlite3_prepare16_v2(m_pDb, sqlCmd.c_str(), sizeof(wchar_t) * sqlCmd.length(), 
                 &stmt, nullptr) != SQLITE_OK ||

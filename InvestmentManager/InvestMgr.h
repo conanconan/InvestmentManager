@@ -9,7 +9,7 @@
 class CInvestMgr: public IInvestMgr
 {
 public:
-	CInvestMgr();
+	CInvestMgr(const std::wstring& storagePath);
 	virtual ~CInvestMgr();
 
 	virtual bool GetAgentIdList(std::vector<std::wstring>& idList) const;
@@ -31,6 +31,7 @@ public:
 
 private:
 	std::map<std::wstring, std::shared_ptr<CInvestAgent>> m_investAgents;
+    std::wstring m_storagePath;
 
 	void Initialize();
 };

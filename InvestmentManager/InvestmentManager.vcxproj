@@ -197,9 +197,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DataItem.h" />
+    <ClInclude Include="DataProviderFactory.h" />
     <ClInclude Include="IDataProvider.h" />
     <ClInclude Include="IInvestMgr.h" />
     <ClInclude Include="InvestAgent.h" />
+    <ClInclude Include="InvestDbFactory.h" />
     <ClInclude Include="InvestmentManager.h" />
     <ClInclude Include="InvestMgr.h" />
     <ClInclude Include="MovingAverage.h" />
@@ -211,8 +213,10 @@
     <ClInclude Include="TwStockUtility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DataProviderFactory.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="InvestAgent.cpp" />
+    <ClCompile Include="InvestDbFactory.cpp" />
     <ClCompile Include="InvestmentManager.cpp" />
     <ClCompile Include="InvestMgr.cpp" />
     <ClCompile Include="MovingAverage.cpp" />

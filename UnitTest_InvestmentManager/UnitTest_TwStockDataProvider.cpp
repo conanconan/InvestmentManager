@@ -34,7 +34,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetAgentIdList)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			std::vector<std::wstring> agentId;
 			investMgr->GetAgentIdList(agentId);
@@ -47,7 +48,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetTSEData)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			CDataItem data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -61,7 +63,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetOTCData)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			CDataItem data;
 			investMgr->GetData(L"TwStock_OverTheCounterMarket",
@@ -75,7 +78,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetSimpleData)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			CDataItem data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -93,7 +97,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetDataWithDayCount)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			std::vector<CDataItem> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -106,7 +111,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetDataWithLargeDayCount)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 			// data only from 2015/03/23 orz
 			std::vector<CDataItem> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -119,7 +125,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetDataWithDayDurationInTheSameMonth)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			std::vector<CDataItem> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -134,7 +141,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetDataWithDayDuration)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			std::vector<CDataItem> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -149,7 +157,8 @@ namespace UnitTest_InvestmentManager
 		TEST_METHOD(GetDataWithLargeDayDuration)
 		{
 			IInvestMgr* investMgr = nullptr;
-			CreateInvestMgr(&investMgr);
+			CreateInvestMgr(ApplicationData::Current->LocalFolder->Path->Data(), 
+                &investMgr);
 
 			std::vector<CDataItem> data;
 			investMgr->GetData(L"TwStock_StockExchangeMarket",
@@ -200,10 +209,10 @@ namespace UnitTest_InvestmentManager
                 ApplicationData::Current->LocalFolder->Path->Data();
             filesystem::path dbFilePath = 
                 filesystem::path(localPath) / L"db" / L"oneTable.db";
-            std::vector<std::wstring> dbTables;
-            dbTables.push_back(L"table1(id1 TEXT, id2 TEXT)");
+            std::map<std::wstring, std::vector<std::wstring>> dbTable =
+            { {L"table1", {L"id1 TEXT", L"id2 TEXT"}} };
             
-            CInvestDb db(dbFilePath, dbTables);
+            CInvestDb db(dbFilePath, dbTable);
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b2" }));
             Assert::IsTrue(db.InsertData(L"table1", { L"a2", L"b3" }));
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b4" }));
@@ -224,10 +233,10 @@ namespace UnitTest_InvestmentManager
                 ApplicationData::Current->LocalFolder->Path->Data();
             filesystem::path dbFilePath =
                 filesystem::path(localPath) / L"db" / L"sameData.db";
-            std::vector<std::wstring> dbTables;
-            dbTables.push_back(L"tableSame(id1 TEXT, id2 TEXT)");
+            std::map<std::wstring, std::vector<std::wstring>> dbTable =
+            { { L"tableSame",{ L"id1 TEXT", L"id2 TEXT" } } };
 
-            CInvestDb db(dbFilePath, dbTables);
+            CInvestDb db(dbFilePath, dbTable);
             Assert::IsTrue(db.InsertData(L"tableSame", { L"a1", L"b2" }));
             Assert::IsTrue(db.InsertData(L"tableSame", { L"a1", L"b2" }));
             Assert::IsTrue(db.InsertData(L"tableSame", { L"a1", L"b2" }));
@@ -250,11 +259,11 @@ namespace UnitTest_InvestmentManager
                 ApplicationData::Current->LocalFolder->Path->Data();
             filesystem::path dbFilePath =
                 filesystem::path(localPath) / L"db" / L"twoTable.db";
-            std::vector<std::wstring> dbTables;
-            dbTables.push_back(L"table1(id1 TEXT, id2 TEXT, id3 TEXT)");
-            dbTables.push_back(L"table2(id1 TEXT, id2 TEXT, id3 TEXT, id4 TEXT)");
+            std::map<std::wstring, std::vector<std::wstring>> dbTable =
+            { { L"table1",{ L"id1 TEXT", L"id2 TEXT", L"id3 TEXT" } },
+              { L"table2",{ L"id1 TEXT", L"id2 TEXT", L"id3 TEXT", L"id4 TEXT" } } };
 
-            CInvestDb db(dbFilePath, dbTables);
+            CInvestDb db(dbFilePath, dbTable);
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b2", L"c3"}));
             Assert::IsTrue(db.InsertData(L"table1", { L"a2", L"b3", L"c4"}));
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b4", L"c3" }));
@@ -282,6 +291,22 @@ namespace UnitTest_InvestmentManager
             {
                 Assert::IsTrue(data[2] == L"g71" || data[2] == L"g73");
             }
+        }
+
+        TEST_METHOD(CreateDbWithPrimaryKey)
+        {
+            std::wstring localPath =
+                ApplicationData::Current->LocalFolder->Path->Data();
+            filesystem::path dbFilePath =
+                filesystem::path(localPath) / L"db" / L"oneTableWithPrimaryKey.db";
+            std::map<std::wstring, std::vector<std::wstring>> dbTable =
+            { { L"table1",{ L"id1 TEXT", L"id2 TEXT", L"id3 TEXT", 
+                            L"primary key (id1, id2)" } } };
+
+            CInvestDb db(dbFilePath, dbTable);
+            Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b2", L"c3" }));
+            Assert::IsTrue(db.InsertData(L"table1", { L"a2", L"b3", L"c3" }));
+            Assert::IsFalse(db.InsertData(L"table1", { L"a2", L"b3", L"c4" }));
         }
     };
 }
