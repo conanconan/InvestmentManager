@@ -61,8 +61,7 @@ bool ParseOTCJsonToDataItem(const json::value& jsonData, const boost::gregorian:
     return !data.empty();
 }
 
-bool GetOTCAllData(std::wstring dataId,
-    boost::gregorian::date date, std::vector<CDataItem>& data)
+bool GetOTCAllData(boost::gregorian::date date, std::vector<CDataItem>& data)
 {
     http_client httpClient(U("http://www.tpex.org.tw"));
 
@@ -109,7 +108,7 @@ bool CTwStockOTCDataProvider::GetData(std::wstring dataId, boost::gregorian::dat
     }
 
     std::vector<CDataItem> allData;
-    if (GetOTCAllData(dataId, date, allData))
+    if (GetOTCAllData(date, allData))
     {
         for (auto& item : allData)
         {

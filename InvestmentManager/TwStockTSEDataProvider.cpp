@@ -33,6 +33,12 @@ bool CTwStockTSEDataProvider::GetRealTimeData(std::wstring dataId, CDataItem& da
     return GetTwStockRealTimeData(L"tse", dataId, data);
 }
 
+bool ParseTSEJsonData(const json::value& jsonData, const boost::gregorian::date date,
+    std::vector<CDataItem>& data)
+{
+    return false;
+}
+
 bool CTwStockTSEDataProvider::GetData(std::wstring dataId,
 	boost::gregorian::date date, CDataItem& data) const
 {
@@ -41,6 +47,32 @@ bool CTwStockTSEDataProvider::GetData(std::wstring dataId,
         return false;
     }
 
+    http_client httpClient(U("http://www.twse.com.tw"));
+    uri_builder uriBuilder(U("/exchangeReport/MI_INDEX"));
+    uriBuilder.append_query(U("date"), boost::gregorian::to_iso_string(date).c_str())
+        .append_query(U("response"), "json")
+        .append_query(U("type"), "ALL")
+        .append_query(U("_"),
+            duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count());
+
+    http_request request;
+    request.set_method(methods::GET);
+    request.set_request_uri(uriBuilder.to_uri());
+
+    http_response httpResponse = httpClient.request(request).get();
+    if (httpResponse.status_code() == status_codes::OK)
+    {
+        utility::string_t content = httpResponse.extract_string().get();
+        json::value dataInJson = json::value::parse(content);
+        auto iter = dataInJson.as_object().find(L"data5");
+        if (iter != dataInJson.as_object().cend())
+        {
+            return false;//ParseTSEJsonData();
+        }
+    }
+
+    return false;
+    //
     std::vector<CDataItem> oneMonthData;
     if (GetOneMonthData(dataId, date, oneMonthData))
     {
@@ -148,6 +180,9 @@ bool CTwStockTSEDataProvider::GetOneMonthData(std::wstring dataId,
     {
         return false;
     }
+
+    // new format
+    // http://www.twse.com.tw/exchangeReport/MI_INDEX?date=20170619&response=json&type=ALL&_={unix timestamp}
 
 	http_client httpClient(U("http://www.twse.com.tw/ch/trading/exchange/STOCK_DAY/STOCK_DAYMAIN.php"));
 
