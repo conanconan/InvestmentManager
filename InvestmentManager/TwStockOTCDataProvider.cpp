@@ -53,7 +53,7 @@ bool ParseOTCJsonToDataItem(const json::value& jsonData, const boost::gregorian:
         item.dayLowPrice = jsonItem.as_array().at(6).as_string();
         utility::string_t sVolume = jsonItem.as_array().at(8).as_string();
         sVolume.erase(std::remove(sVolume.begin(), sVolume.end(), L','), sVolume.end());
-        item.totalVolume = std::to_wstring(std::stoll(sVolume) / 1000);
+        item.totalVolume = std::to_wstring(std::stoll(sVolume));
 
         data.push_back(item);
     }
