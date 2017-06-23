@@ -23,7 +23,7 @@ bool CInvestAgent::GetData(std::vector<std::wstring> dataId, boost::gregorian::d
 	for (const auto& id : dataId)
 	{
 		CDataItem item;
-		if (m_dataProvider->GetData(id, date, item))
+		if (GetData(id, date, item))
 		{
 			data.push_back(item);
 		}
