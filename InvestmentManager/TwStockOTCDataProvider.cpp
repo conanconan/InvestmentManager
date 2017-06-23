@@ -61,7 +61,7 @@ bool ParseOTCJsonToDataItem(const json::value& jsonData, const boost::gregorian:
     return !data.empty();
 }
 
-bool GetOTCAllData(boost::gregorian::date date, std::vector<CDataItem>& data)
+bool CTwStockOTCDataProvider::GetAllData(boost::gregorian::date date, std::vector<CDataItem>& data) const
 {
     http_client httpClient(U("http://www.tpex.org.tw"));
 
@@ -108,7 +108,7 @@ bool CTwStockOTCDataProvider::GetData(std::wstring dataId, boost::gregorian::dat
     }
 
     std::vector<CDataItem> allData;
-    if (GetOTCAllData(date, allData))
+    if (GetAllData(date, allData))
     {
         for (auto& item : allData)
         {
@@ -121,28 +121,4 @@ bool CTwStockOTCDataProvider::GetData(std::wstring dataId, boost::gregorian::dat
     }
 
     return false;
-}
-
-bool CTwStockOTCDataProvider::GetOneMonthData(std::wstring dataId, boost::gregorian::date date, std::vector<CDataItem>& data) const
-{
-    if (boost::gregorian::date(date.year(), date.month(), 1)
-        < boost::gregorian::date(m_beginDate.year(), m_beginDate.month(), 1))
-    {
-        return false;
-    }
-
-    data.clear();
-    boost::gregorian::date dateInMonth(date.year(), date.month(), 1);
-    while (dateInMonth <= date.end_of_month())
-    {
-        CDataItem item;
-        if (GetData(dataId, dateInMonth, item))
-        {
-            data.push_back(item);
-        }
-
-        dateInMonth += boost::gregorian::date_duration(1);
-    }
-
-    return !data.empty();
 }

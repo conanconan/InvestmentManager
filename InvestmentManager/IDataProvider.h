@@ -13,6 +13,5 @@ public:
 	virtual bool GetRealTimeData(std::wstring dataId, CDataItem& data) const = 0;
 	virtual bool GetData(std::wstring dataId,
 		boost::gregorian::date date, CDataItem& data) const = 0;
-	virtual bool GetOneMonthData(std::wstring dataId,
-		boost::gregorian::date date, std::vector<CDataItem>& data) const = 0;
+    virtual bool GetAllData(boost::gregorian::date date, std::vector<CDataItem>& data) const = 0;
 };
