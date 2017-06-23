@@ -6,8 +6,7 @@ class CDataItem
 public:
 	std::wstring id;
 	std::wstring category;
-	std::wstring fullName;
-	std::wstring abbrevName;
+	std::wstring name;
 	std::wstring closingPrice;
 	std::wstring totalVolume;
 	std::wstring openingPrice;

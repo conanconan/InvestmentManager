@@ -44,7 +44,7 @@ bool ParseOTCJsonToDataItem(const json::value& jsonData, const boost::gregorian:
         CDataItem item;
 
         item.id = jsonItem.as_array().at(0).as_string();
-        item.abbrevName = jsonItem.as_array().at(1).as_string();
+        item.name = jsonItem.as_array().at(1).as_string();
         item.category = L"otc";
         item.date = sDate;
         item.openingPrice = jsonItem.as_array().at(4).as_string();

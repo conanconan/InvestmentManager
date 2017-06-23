@@ -45,7 +45,7 @@ bool ParseTSEJsonData(const json::value& jsonData, const boost::gregorian::date 
         CDataItem item;
 
         item.id = jsonItem.as_array().at(0).as_string();
-        item.abbrevName = jsonItem.as_array().at(1).as_string();
+        item.name = jsonItem.as_array().at(1).as_string();
         item.category = L"tse";
         item.date = sDate;
         item.openingPrice = jsonItem.as_array().at(5).as_string();

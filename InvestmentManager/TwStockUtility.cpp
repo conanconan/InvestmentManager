@@ -115,8 +115,7 @@ bool ParseJsonToDataItem(const json::value jsonItem, CDataItem& item)
 
     item.category = jsonItem.as_object().find(L"ex")->second.as_string();
     item.id = jsonItem.as_object().find(L"c")->second.as_string();
-    item.fullName = jsonItem.as_object().find(L"nf")->second.as_string();
-    item.abbrevName = jsonItem.as_object().find(L"n")->second.as_string();
+    item.name = jsonItem.as_object().find(L"n")->second.as_string();
 
     item.closingPrice = jsonItem.as_object().find(L"z")->second.as_string();
     item.totalVolume = jsonItem.as_object().find(L"v")->second.as_string();
