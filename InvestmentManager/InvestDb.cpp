@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "InvestDb.h"
+#include "Utility.h"
 
 const std::wstring dayTableName(L"DailyInfo");
 
@@ -15,6 +16,8 @@ CInvestDb::~CInvestDb()
 
 bool CInvestDb::QueryData(std::wstring dataId, boost::gregorian::date date, CDataItem& data)
 {
+    CAutoLock lock(m_dbMutex);
+
     std::wstringstream condition;
     condition << L"id = " << dataId.c_str() << " and "
         << "date = " << boost::gregorian::to_iso_wstring(date).c_str();
@@ -41,6 +44,8 @@ bool CInvestDb::QueryData(std::wstring dataId, boost::gregorian::date date, CDat
 
 bool CInvestDb::InsertData(CDataItem& data)
 {
+    CAutoLock lock(m_dbMutex);
+
     return CDbWrapper::InsertData(dayTableName.c_str(),
         { data.date, data.id, data.name, data.totalVolume,
             data.openingPrice, data.closingPrice, data.dayHighPrice, data.dayLowPrice });

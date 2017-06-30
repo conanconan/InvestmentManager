@@ -212,6 +212,7 @@
     <ClInclude Include="TwStockOTCDataProvider.h" />
     <ClInclude Include="TwStockTSEDataProvider.h" />
     <ClInclude Include="TwStockUtility.h" />
+    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataProviderFactory.cpp" />
@@ -234,6 +235,7 @@
     <ClCompile Include="TwStockOTCDataProvider.cpp" />
     <ClCompile Include="TwStockTSEDataProvider.cpp" />
     <ClCompile Include="TwStockUtility.cpp" />
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

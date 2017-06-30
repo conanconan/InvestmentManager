@@ -20,6 +20,7 @@
     <ClCompile Include="InvestDbFactory.cpp" />
     <ClCompile Include="DbWrapper.cpp" />
     <ClCompile Include="InvestDb.cpp" />
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InvestmentManager.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="InvestDbFactory.h" />
     <ClInclude Include="DbWrapper.h" />
     <ClInclude Include="InvestDb.h" />
+    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

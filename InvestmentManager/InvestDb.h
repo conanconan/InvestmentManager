@@ -2,6 +2,7 @@
 #include "DbWrapper.h"
 #include "boost/date_time/gregorian/gregorian.hpp"
 #include "DataItem.h"
+#include <mutex>
 
 class CInvestDb : private CDbWrapper
 {
@@ -16,5 +17,6 @@ public:
 private:
     std::experimental::filesystem::path m_filePath;
     std::map<std::wstring, std::vector<std::wstring>> m_table;
+    std::mutex m_dbMutex;
 };
 
