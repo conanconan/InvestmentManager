@@ -4,7 +4,7 @@
 #include "InvestmentManager/InvestmentManager.h"
 #include "InvestmentManager/DataItem.h"
 #include "InvestmentManager/MovingAverage.h"
-#include "InvestmentManager/InvestDb.h"
+#include "InvestmentManager/DbWrapper.h"
 #include <string>
 #include <vector>
 #include <experimental/filesystem>
@@ -200,7 +200,7 @@ namespace UnitTest_InvestmentManager
         }
     };
 
-    TEST_CLASS(UnitTest_InvestDb)
+    TEST_CLASS(UnitTest_DbWrapper)
     {
     public:
         TEST_METHOD(CreateDbWithOneTable)
@@ -212,7 +212,7 @@ namespace UnitTest_InvestmentManager
             std::map<std::wstring, std::vector<std::wstring>> dbTable =
             { {L"table1", {L"id1 TEXT", L"id2 TEXT"}} };
             
-            CInvestDb db(dbFilePath, dbTable);
+            CDbWrapper db(dbFilePath, dbTable);
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b2" }));
             Assert::IsTrue(db.InsertData(L"table1", { L"a2", L"b3" }));
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b4" }));
@@ -236,7 +236,7 @@ namespace UnitTest_InvestmentManager
             std::map<std::wstring, std::vector<std::wstring>> dbTable =
             { { L"tableSame",{ L"id1 TEXT", L"id2 TEXT" } } };
 
-            CInvestDb db(dbFilePath, dbTable);
+            CDbWrapper db(dbFilePath, dbTable);
             Assert::IsTrue(db.InsertData(L"tableSame", { L"a1", L"b2" }));
             Assert::IsTrue(db.InsertData(L"tableSame", { L"a1", L"b2" }));
             Assert::IsTrue(db.InsertData(L"tableSame", { L"a1", L"b2" }));
@@ -263,7 +263,7 @@ namespace UnitTest_InvestmentManager
             { { L"table1",{ L"id1 TEXT", L"id2 TEXT", L"id3 TEXT" } },
               { L"table2",{ L"id1 TEXT", L"id2 TEXT", L"id3 TEXT", L"id4 TEXT" } } };
 
-            CInvestDb db(dbFilePath, dbTable);
+            CDbWrapper db(dbFilePath, dbTable);
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b2", L"c3"}));
             Assert::IsTrue(db.InsertData(L"table1", { L"a2", L"b3", L"c4"}));
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b4", L"c3" }));
@@ -303,7 +303,7 @@ namespace UnitTest_InvestmentManager
             { { L"table1",{ L"id1 TEXT", L"id2 TEXT", L"id3 TEXT", 
                             L"primary key (id1, id2)" } } };
 
-            CInvestDb db(dbFilePath, dbTable);
+            CDbWrapper db(dbFilePath, dbTable);
             Assert::IsTrue(db.InsertData(L"table1", { L"a1", L"b2", L"c3" }));
             Assert::IsTrue(db.InsertData(L"table1", { L"a2", L"b3", L"c3" }));
             Assert::IsFalse(db.InsertData(L"table1", { L"a2", L"b3", L"c4" }));

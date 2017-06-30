@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "InvestAgent.h"
 #include <thread>
+#include "InvestDb.h"
 
 const size_t fewDayBoundary = 50;
 const size_t aroundWorkingDayPerMonth = 22;
@@ -39,7 +40,18 @@ bool CInvestAgent::GetData(std::vector<std::wstring> dataId, boost::gregorian::d
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date date, 
 	CDataItem& data)
 {
-	return m_dataProvider->GetData(dataId, date, data);
+    if (m_db->QueryData(dataId, date, data))
+    {
+        return true;
+    }
+
+    if (m_dataProvider->GetData(dataId, date, data))
+    {
+        m_db->InsertData(data);
+        return true;
+    }
+
+    return false;
 }
 
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,

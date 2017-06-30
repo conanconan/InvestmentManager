@@ -207,6 +207,7 @@
     <ClInclude Include="MovingAverage.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="DbWrapper.h" />
     <ClInclude Include="InvestDb.h" />
     <ClInclude Include="TwStockOTCDataProvider.h" />
     <ClInclude Include="TwStockTSEDataProvider.h" />
@@ -228,6 +229,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DbWrapper.cpp" />
     <ClCompile Include="InvestDb.cpp" />
     <ClCompile Include="TwStockOTCDataProvider.cpp" />
     <ClCompile Include="TwStockTSEDataProvider.cpp" />

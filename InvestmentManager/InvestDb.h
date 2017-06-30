@@ -1,29 +1,20 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <map>
-#include <experimental/filesystem>
+#include "DbWrapper.h"
+#include "boost/date_time/gregorian/gregorian.hpp"
+#include "DataItem.h"
 
-struct sqlite3;
-
-class CInvestDb
+class CInvestDb : private CDbWrapper
 {
 public:
-    CInvestDb(const std::experimental::filesystem::path& dbFilePath, 
+    CInvestDb(const std::experimental::filesystem::path& dbFilePath,
         const std::map<std::wstring, std::vector<std::wstring>>& dbTable);
     virtual ~CInvestDb();
 
-    bool InsertData(const std::wstring& table, const std::vector<std::wstring>& data);
-    bool QueryData(const std::wstring& table, const std::vector<std::wstring>& queryColumn, 
-        const std::wstring& condition, std::vector<std::vector<std::wstring>>& data);
+    bool QueryData(std::wstring dataId, boost::gregorian::date date, CDataItem& data);
+    bool InsertData(CDataItem& data);
 
 private:
-    sqlite3* m_pDb;
-
-    std::wstring CreateTableCmd(const std::pair<std::wstring, 
-        const std::vector<std::wstring>>& dbTable);
-    void CreateDb(const std::experimental::filesystem::path& dbFilePath,
-        const std::map<std::wstring, std::vector<std::wstring>>& dbTable);
-    void ReleaseDb();
+    std::experimental::filesystem::path m_filePath;
+    std::map<std::wstring, std::vector<std::wstring>> m_table;
 };
 

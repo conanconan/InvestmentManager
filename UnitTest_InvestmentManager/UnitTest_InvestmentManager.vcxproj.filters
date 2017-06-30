@@ -17,13 +17,13 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="UnitTest_TwStockDataProvider.cpp" />
     <ClCompile Include="..\InvestmentManager\MovingAverage.cpp" />
-    <ClCompile Include="..\InvestmentManager\InvestDb.cpp" />
+    <ClCompile Include="..\InvestmentManager\DbWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="UnitTestApp.xaml.h" />
     <ClInclude Include="..\InvestmentManager\MovingAverage.h" />
-    <ClInclude Include="..\InvestmentManager\InvestDb.h" />
+    <ClInclude Include="..\InvestmentManager\DbWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="UnitTestApp.rd.xml" />
