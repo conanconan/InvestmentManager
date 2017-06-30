@@ -43,7 +43,7 @@ std::shared_ptr<CInvestDb> CreateInvestDb(const std::wstring& id, const std::wst
     if (GetDbTables(id, dbTable))
     {
         dbFilePath = dbFilePath / GetDbFileName(id);
-        return std::shared_ptr<CInvestDb>(new CInvestDb(dbFilePath, dbTable));
+        return std::make_shared<CInvestDb>(dbFilePath, dbTable);
     }
 
     return std::shared_ptr<CInvestDb>(nullptr);

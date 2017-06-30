@@ -6,9 +6,9 @@
 std::shared_ptr<IDataProvider> CreateDataProvider(std::wstring id)
 {
     if (id == L"TwStock_StockExchangeMarket")
-        return std::shared_ptr<IDataProvider>(new CTwStockTSEDataProvider());
+        return std::make_shared<CTwStockTSEDataProvider>();
     if (id == L"TwStock_OverTheCounterMarket") 
-        return std::shared_ptr<IDataProvider>(new CTwStockOTCDataProvider());
+        return std::make_shared<CTwStockOTCDataProvider>();
 
     return std::shared_ptr<IDataProvider>(nullptr);
 }
