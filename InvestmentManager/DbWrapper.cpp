@@ -110,9 +110,17 @@ bool CDbWrapper::QueryData(const std::wstring& table, const std::vector<std::wst
         {
             data.push_back(std::vector<std::wstring>());
             auto& rowData = data.back();
-            for (size_t i = 0; i < queryColumn.size(); ++i)
+            int columnCount = sqlite3_column_count(stmt);
+            if (columnCount > 0)
             {
-                rowData.push_back(static_cast<const wchar_t*>(sqlite3_column_text16(stmt, i)));
+                for (int i = 0; i < columnCount; ++i)
+                {
+                    rowData.push_back(static_cast<const wchar_t*>(sqlite3_column_text16(stmt, i)));
+                }
+            }
+            else
+            {
+                data.erase(data.begin() + data.size() - 1);
             }
         }
 

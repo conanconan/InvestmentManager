@@ -19,8 +19,8 @@ bool CInvestDb::QueryData(std::wstring dataId, boost::gregorian::date date, CDat
     CAutoLock lock(m_dbMutex);
 
     std::wstringstream condition;
-    condition << L"id = " << dataId.c_str() << " and "
-        << "date = " << boost::gregorian::to_iso_wstring(date).c_str();
+    condition << L"id = '" << dataId.c_str() << "' and "
+        << "date = '" << boost::gregorian::to_iso_wstring(date).c_str() << "'";
 
     std::vector<std::vector<std::wstring>> queryData;
     if (CDbWrapper::QueryData(dayTableName.c_str(), { L"*" }, condition.str(), queryData) &&
