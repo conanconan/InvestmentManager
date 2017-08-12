@@ -5,11 +5,12 @@
 #include "IDataProvider.h"
 #include "InvestDb.h"
 
+
 class CInvestAgent
 {
 public:
 	CInvestAgent(std::shared_ptr<IDataProvider> dataProvider, 
-        std::shared_ptr<CInvestDb> db);
+        std::shared_ptr<CInvestDb> db, bool updateDbSilently);
 	virtual ~CInvestAgent();
 
 	bool GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
@@ -25,7 +26,10 @@ public:
 
 private:
 	std::shared_ptr<IDataProvider> m_dataProvider;
+    std::map<std::wstring, std::vector<std::wstring>> m_dataId;
     std::shared_ptr<CInvestDb> m_db;
+    std::shared_ptr<std::thread> m_updateDbThread;
+    bool m_startUpdateDbThread;
 
 	bool GetFewData(std::wstring dataId, boost::gregorian::date fromDate, size_t dayCount,
 		std::vector<CDataItem>& data);
@@ -34,5 +38,12 @@ private:
 	static bool GetFewDataForMultiThread(CInvestAgent* agent, std::wstring dataId, 
 		boost::gregorian::date fromDate, boost::gregorian::date toDate, 
 		std::shared_ptr<std::vector<CDataItem>> data);
+    void CreateUpdateDbThread();
+    void ReleaseUpdateDbThread();
+    static void UpdateDb(CInvestAgent* agent, 
+        boost::gregorian::date fromDate, boost::gregorian::date toDate);
+    bool IsDataInDb(boost::gregorian::date date);
+    void DevideDatePeriodIntoMonths(boost::gregorian::date fromDate, boost::gregorian::date toDate,
+        std::vector<std::pair<boost::gregorian::date, boost::gregorian::date>>& datePeriodInMonths);
 };
 

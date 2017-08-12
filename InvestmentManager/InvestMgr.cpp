@@ -22,11 +22,11 @@ void CInvestMgr::Initialize()
 	// ¤W¥«
 	m_investAgents[L"TwStock_StockExchangeMarket"] = std::shared_ptr<CInvestAgent>
 		(new CInvestAgent(CreateDataProvider(L"TwStock_StockExchangeMarket"), 
-            CreateInvestDb(L"TwStock_StockExchangeMarket", m_storagePath)));
+            CreateInvestDb(L"TwStock_StockExchangeMarket", m_storagePath), true));
 	// ¤WÂd
 	m_investAgents[L"TwStock_OverTheCounterMarket"] = std::shared_ptr<CInvestAgent>
 		(new CInvestAgent(CreateDataProvider(L"TwStock_OverTheCounterMarket"), 
-            CreateInvestDb(L"TwStock_OverTheCounterMarket", m_storagePath)));
+            CreateInvestDb(L"TwStock_OverTheCounterMarket", m_storagePath), true));
 	// ¿³Âd TwStock_EmergingStockMarket
 }
 

@@ -1,20 +1,35 @@
 #include "pch.h"
 #include "InvestAgent.h"
-#include <thread>
 #include "InvestDb.h"
+#include <thread>
+#include <future>
+#include <chrono>
+#include <random>
 
 const size_t fewDayBoundary = 50;
 const size_t aroundWorkingDayPerMonth = 22;
 const boost::gregorian::date_duration oneDay(1);
+const size_t maxUpdateThreadCount = 32;
 
 CInvestAgent::CInvestAgent(std::shared_ptr<IDataProvider> dataProvider, 
-    std::shared_ptr<CInvestDb> db)
-	: m_dataProvider(dataProvider), m_db(db)
+    std::shared_ptr<CInvestDb> db, bool updateDbSilently)
+	: m_dataProvider(dataProvider), m_db(db), 
+    m_updateDbThread(nullptr), m_startUpdateDbThread(false)
 {
+    m_dataProvider->GetDataId(m_dataId);
+
+    if (updateDbSilently)
+    {
+        CreateUpdateDbThread();
+    }
 }
 
 CInvestAgent::~CInvestAgent()
 {
+    if (m_startUpdateDbThread)
+    {
+        ReleaseUpdateDbThread();
+    }
 }
 
 bool CInvestAgent::GetData(std::vector<std::wstring> dataId, boost::gregorian::date date, 
@@ -114,25 +129,42 @@ bool CInvestAgent::GetFewDataForMultiThread(CInvestAgent* agent, std::wstring da
 bool CInvestAgent::GetData(std::wstring dataId, boost::gregorian::date fromDate,
 	boost::gregorian::date toDate, std::vector<CDataItem>& data)
 {
-	std::vector<std::shared_ptr<std::vector<CDataItem>>> allData;
-	std::vector<std::shared_ptr<std::thread>> threads;
-	for (size_t i = 0, monthCount = 1 + (toDate.year() - fromDate.year()) * 12 + (toDate.month() - fromDate.month()); 
-		 i < monthCount; ++i)
-	{
-		boost::gregorian::date first(fromDate.year() + (i + fromDate.month() - 1) / 12,
-									 (i + fromDate.month() - 1) % 12 + 1,
-									 (i != 0) ? 1 : fromDate.day());
-		boost::gregorian::date last = (first.year() != toDate.year() || first.month() != toDate.month()) 
-			? first.end_of_month() : toDate;
-		allData.push_back(std::make_shared<std::vector<CDataItem>>());
+	std::vector<std::pair<boost::gregorian::date, boost::gregorian::date>> datePeriodInMonths;
+    DevideDatePeriodIntoMonths(fromDate, toDate, datePeriodInMonths);
 
-		threads.push_back(std::make_shared<std::thread>
-			(&CInvestAgent::GetFewDataForMultiThread, this, dataId, first, last, allData.back()));
-	}
+    std::vector<std::shared_ptr<std::vector<CDataItem>>> allData;
+	std::vector<std::future<bool>> futures;
+    for (auto& datePeriod : datePeriodInMonths)
+    {
+        allData.push_back(std::make_shared<std::vector<CDataItem>>());
+        if (futures.size() >= maxUpdateThreadCount)
+        {
+            bool hasResource = false;
+            while (!hasResource)
+            {
+                for (int i = (int)futures.size() - 1; i >= 0; --i)
+                {
+                    if (futures[i].wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+                    {
+                        hasResource = true;
+                        futures.erase(futures.begin() + i);
+                    }
+                }
 
-	for (auto& thread : threads)
+                std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            }
+        }
+
+        futures.push_back(std::async(std::launch::async, CInvestAgent::GetFewDataForMultiThread,
+            this, dataId, datePeriod.first, datePeriod.second, allData.back()));
+    }
+
+    for (auto& future : futures)
 	{
-		thread->join();
+        while (future.wait_for(std::chrono::milliseconds(0)) != std::future_status::ready)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        }
 	}
 
 	data.clear();
@@ -149,7 +181,6 @@ bool CInvestAgent::GetFewData(std::wstring dataId, boost::gregorian::date fromDa
 	boost::gregorian::date toDate, std::vector<CDataItem>& data)
 {
 	boost::gregorian::date today = boost::gregorian::day_clock::local_day();
-	boost::gregorian::date_duration oneDay(1);
 	data.clear();
 
 	boost::gregorian::date date = fromDate;
@@ -194,4 +225,117 @@ bool CInvestAgent::GetSimpleData(std::wstring dataId, boost::gregorian::date dat
 	}
 
 	return false;
+}
+
+bool CInvestAgent::IsDataInDb(boost::gregorian::date date)
+{
+    size_t testCount = m_dataId.size();
+    for (auto& categoryDataId : m_dataId)
+    {
+        if (!categoryDataId.second.empty())
+        {
+            std::default_random_engine generator;
+            std::uniform_int_distribution<int> distribution(0, categoryDataId.second.size() - 1);
+            CDataItem item;
+            if (m_db->QueryData(categoryDataId.second[distribution(generator)], date, item))
+            {
+                testCount--;
+            }
+        }
+    }
+
+    return (testCount == 0);
+}
+
+void CInvestAgent::DevideDatePeriodIntoMonths(boost::gregorian::date fromDate, boost::gregorian::date toDate,
+    std::vector<std::pair<boost::gregorian::date, boost::gregorian::date>>& datePeriodInMonths)
+{
+    datePeriodInMonths.clear();
+    for (size_t i = 0, monthCount = 1 + (toDate.year() - fromDate.year()) * 12 + (toDate.month() - fromDate.month());
+        i < monthCount; ++i)
+    {
+        boost::gregorian::date first(fromDate.year() + (i + fromDate.month() - 1) / 12,
+            (i + fromDate.month() - 1) % 12 + 1,
+            (i != 0) ? 1 : fromDate.day());
+        boost::gregorian::date last = (first.year() != toDate.year() || first.month() != toDate.month())
+            ? first.end_of_month() : toDate;
+
+        datePeriodInMonths.push_back(std::pair<boost::gregorian::date, boost::gregorian::date>(first, last));
+    }
+}
+
+void CInvestAgent::UpdateDb(CInvestAgent* agent, 
+    boost::gregorian::date fromDate, boost::gregorian::date toDate)
+{
+    if (fromDate > toDate)
+    {
+        return;
+    }
+
+    if (fromDate.year() == toDate.year() && fromDate.month() == toDate.month())
+    {
+
+        return;
+    }
+
+    std::vector<std::pair<boost::gregorian::date, boost::gregorian::date>> datePeriodInMonths;
+    agent->DevideDatePeriodIntoMonths(fromDate, toDate, datePeriodInMonths);
+
+    std::vector<std::future<void>> futures;
+    for (auto& datePeriod : datePeriodInMonths)
+    {
+        if (futures.size() >= maxUpdateThreadCount)
+        {
+            bool hasResource = false;
+            while (!hasResource)
+            {
+                for (int i = (int)futures.size() - 1; i >= 0; --i)
+                {
+                    if (futures[i].wait_for(std::chrono::milliseconds(0)) == std::future_status::ready)
+                    {
+                        hasResource = true;
+                        futures.erase(futures.begin() + i);
+                    }
+                }
+
+                if (!agent->m_startUpdateDbThread)
+                {
+                    break;
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            }
+        }
+
+        if (!agent->m_startUpdateDbThread)
+        {
+            break;
+        }
+
+        futures.push_back(std::async(std::launch::async, CInvestAgent::UpdateDb,
+            agent, datePeriod.first, datePeriod.second));
+    }
+
+    for (auto& future : futures)
+    {
+        while (future.wait_for(std::chrono::milliseconds(0)) != std::future_status::ready)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        }
+    }
+}
+
+void CInvestAgent::CreateUpdateDbThread()
+{
+    m_startUpdateDbThread = true;
+
+    boost::gregorian::date firstDay = m_dataProvider->DataBeginsOn();
+    boost::gregorian::date today = boost::gregorian::day_clock::local_day();
+    m_updateDbThread = std::make_shared<std::thread>(CInvestAgent::UpdateDb, this, firstDay, today);
+}
+
+void CInvestAgent::ReleaseUpdateDbThread()
+{
+    m_startUpdateDbThread = false;
+    m_updateDbThread->join();
 }
